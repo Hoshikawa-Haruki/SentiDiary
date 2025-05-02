@@ -17,7 +17,9 @@
     <body>
         <h1>일기 작성 테스트</h1>
 
-        <form action="${pageContext.request.contextPath}/api/v1/diaries/createDiary" method="post">
+        <!-- <form action="${pageContext.request.contextPath}/api/v1/diaries/createDiary" method="post"> -->
+        <form action="${pageContext.request.contextPath}/form/createDiary" method="post">
+
             <label>사용자 ID:</label><br>
             <input type="number" name="userId" value="20203105" required><br><br>
             <label>제목:</label><br>
@@ -26,8 +28,11 @@
             <label>내용:</label><br>
             <textarea name="content" rows="5" cols="30" required></textarea><br><br>
 
-            <label>공개 여부 (true/false):</label><br>
-            <input type="text" name="viewScope" value="false" required><br><br>
+            <label>공개 여부:</label><br>
+            <input type="radio" name="viewScope" value="true" id="public">
+            <label for="public">공개</label><br>
+            <input type="radio" name="viewScope" value="false" id="private" checked>
+            <label for="private">비공개</label><br><br>
 
             <label>날씨 ID (숫자):</label><br>
             <input type="number" name="weatherId" value="1" required><br><br>

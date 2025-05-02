@@ -15,7 +15,10 @@
     <body>
         <div class="box">
             <ol>
-                <li><a href="SentiDiary/createDiary"> 일기 작성 </a></li>
+                <li><a href="/createDiary"> 일기 작성 </a></li>
+                <li><a href="test/createDiary"> 테스트: 일기 작성 </a></li>
+<!--                <li><a href="${pageContext.request.contextPath}/test/showDiary"> 테스트: 일기 조회 </a></li>-->
+                <li><a href="test/showDiary"> 테스트: 일기 조회 </a></li>
             </ol>
         </div>
     </body>

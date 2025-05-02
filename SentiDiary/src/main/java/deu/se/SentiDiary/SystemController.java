@@ -18,11 +18,12 @@ public class SystemController {
 
     @GetMapping("/")
     public String index() {
-        log.info("index is called...");
+        log.info("● index is called...");
         return "index";
     }
-
-    @GetMapping("SentiDiary/createDiary")
+    
+    // 백엔드용
+    @GetMapping("/createDiary")
     public String createDiary() {
         return "createDiary";
     }

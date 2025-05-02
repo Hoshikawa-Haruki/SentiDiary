@@ -23,7 +23,7 @@ public class Diary {
     private Long id; // 일기 id
 
     @Column(nullable = false) // DB 컬럼으로 매핑, NOT NULL
-    private Long userId; // 작성자 id
+    private String userId; // 작성자 id
 
     @Column(nullable = false, length = 255) // 도메인 설정
     private String title; // 제목
@@ -60,11 +60,11 @@ public class Diary {
         this.id = id;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

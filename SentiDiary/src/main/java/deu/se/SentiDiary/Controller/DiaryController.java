@@ -36,6 +36,7 @@ public class DiaryController {
         return ResponseEntity.ok(diaries);
     }
 
+    // 다이어리 작성
     @PostMapping("/createDiary")
     public ResponseEntity<Diary> createDiary(@ModelAttribute Diary diaryRequest) {
         log.info("createDiary is called...");
@@ -43,6 +44,11 @@ public class DiaryController {
         Diary createdDiary = diaryService.createDiary(diaryRequest);
         return ResponseEntity.status(201).body(createdDiary); // 생성된 Diary 객체를 JSON으로 반환
     }
+
+//    @PostMapping("/createDiary") // 응답이 필요 없으면 이렇게 해도 됨
+//    public void createDiary(@ModelAttribute Diary diaryRequest) {
+//        diaryService.createDiary(diaryRequest);
+//    }
 
     // 다이어리 개별 조회
     @GetMapping("/{id}")
