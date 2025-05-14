@@ -36,9 +36,17 @@ public class Diary {
     @Column(nullable = false)
     private Boolean viewScope; // 공개범위
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wno")  // 외래 키
-    private Long weatherId; // 날씨 태그의 아이디 (fk)
+    @ManyToOne
+    @JoinColumn(name = "weather_id")  // 날씨, 외래 키
+    private Weather weather;  // ✅ 객체 참조로 바꿈
+
+    public Weather getWeather() {
+        return weather;
+    }
+
+    public void setWeather(Weather weather) {
+        this.weather = weather;
+    }
 
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now(); // 작성시간
@@ -101,14 +109,6 @@ public class Diary {
 
     public void setViewScope(Boolean viewScope) {
         this.viewScope = viewScope;
-    }
-
-    public Long getWeatherId() {
-        return weatherId;
-    }
-
-    public void setWeatherId(Long weatherId) {
-        this.weatherId = weatherId;
     }
 
     public LocalDateTime getCreatedAt() {

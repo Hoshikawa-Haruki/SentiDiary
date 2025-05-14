@@ -4,32 +4,25 @@
  */
 package deu.se.SentiDiary.DTO;
 
-import java.util.List;
-
 /**
- *
+ * 요청용 DTO
+ * 프론트가 보기 좋은 형태로 가공한 맞춤형 응답 데이터
+ * 
+ * 필드 이름은 JSON 키 이름과 정확히 일치해야 자동 바인딩이 됨
  * @author Haruki
  */
-public class DiaryResponse {
+public class DiaryRequest {
 
-    private Long id;
     private String userId;
     private String title;
     private String content;
     private Boolean viewScope;
-    private String createdAt;
-    private String updatedAt;
-    private String weatherName;  // 연관된 Weather 객체의 name -> 나중에 url 등으로 수정
+    private Long weatherId;
 
-    // Getters & Setters
-    public Long getId() {
-        return id;
+    public DiaryRequest() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    // Getter & Setter
     public String getUserId() {
         return userId;
     }
@@ -62,27 +55,11 @@ public class DiaryResponse {
         this.viewScope = viewScope;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public Long getWeatherId() {
+        return weatherId;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getWeatherName() {
-        return weatherName;
-    }
-
-    public void setWeatherName(String weatherName) {
-        this.weatherName = weatherName;
+    public void setWeatherId(Long weatherId) {
+        this.weatherId = weatherId;
     }
 }
