@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- *
+ * 
  * @author Haruki
  */
 @Controller
@@ -38,7 +38,7 @@ public class TestSystemController {
         return "showDiaryList";  // → /WEB-INF/views/showDiaryList.jsp
     }
 
-    @PostMapping("/diary/delete/{id}")
+    @PostMapping("/diary/delete/{id}") // 뷰에서 받은 삭제 아이디
     public String deleteDiary(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         diaryService.deleteDiary(id);
         redirectAttributes.addFlashAttribute("msg", "성공적으로 삭제되었습니다.");

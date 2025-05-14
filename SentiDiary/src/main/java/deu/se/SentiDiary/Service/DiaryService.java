@@ -9,7 +9,7 @@ package deu.se.SentiDiary.Service;
  * @author Haruki
  */
 
-import deu.se.SentiDiary.Model.Diary;
+import deu.se.SentiDiary.Entity.Diary;
 import deu.se.SentiDiary.Repository.DiaryRepository;
 import org.springframework.stereotype.Service;
 

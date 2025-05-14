@@ -8,7 +8,7 @@ package deu.se.SentiDiary.Controller;
  *
  * @author Haruki
  */
-import deu.se.SentiDiary.Model.Diary;
+import deu.se.SentiDiary.Entity.Diary;
 import deu.se.SentiDiary.Service.DiaryService;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;

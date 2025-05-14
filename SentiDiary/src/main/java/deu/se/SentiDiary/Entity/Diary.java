@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package deu.se.SentiDiary.Model;
+package deu.se.SentiDiary.Entity;
 
 /**
  *
@@ -10,6 +10,8 @@ package deu.se.SentiDiary.Model;
  */
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity // JPA 엔티티 클래스
@@ -34,7 +36,8 @@ public class Diary {
     @Column(nullable = false)
     private Boolean viewScope; // 공개범위
 
-    @Column
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wno")  // 외래 키
     private Long weatherId; // 날씨 태그의 아이디 (fk)
 
     @Column(updatable = false)
@@ -49,7 +52,15 @@ public class Diary {
             joinColumns = @JoinColumn(name = "diary_id"), // 현재 엔티티(Diary)의 FK가 뭐냐를 지정
             inverseJoinColumns = @JoinColumn(name = "emotion_id") //상대 엔티티(EmotionTag)의 FK가 뭐냐를 지정
     )
-    //private Set<EmotionTag> emotionTags;
+    private Set<EmotionTag> emotionTags = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "diary_summary",
+            joinColumns = @JoinColumn(name = "diary_id"),
+            inverseJoinColumns = @JoinColumn(name = "summary_id")
+    )
+    // private Set<SummaryTag> summaryTags = new HashSet<>();
 
     // Getters and Setters
     public Long getId() {

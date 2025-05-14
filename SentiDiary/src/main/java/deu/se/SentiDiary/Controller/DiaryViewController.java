@@ -4,7 +4,7 @@
  */
 package deu.se.SentiDiary.Controller;
 
-import deu.se.SentiDiary.Model.Diary;
+import deu.se.SentiDiary.Entity.Diary;
 import deu.se.SentiDiary.Service.DiaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
- *
+ * 뷰 관련 처리 컨트롤러
  * @author Haruki
  */
 @Controller
