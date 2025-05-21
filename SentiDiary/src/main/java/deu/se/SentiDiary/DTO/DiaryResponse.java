@@ -7,7 +7,7 @@ package deu.se.SentiDiary.DTO;
 import java.util.List;
 
 /**
- *
+ * 서버에서 처리한 일기 정보를 클라이언트에게 JSON으로 응답할 때 사용 (GET 응답 등)
  * @author Haruki
  */
 public class DiaryResponse {

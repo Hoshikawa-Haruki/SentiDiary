@@ -10,7 +10,9 @@ package deu.se.SentiDiary.Entity;
  */
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -54,21 +56,26 @@ public class Diary {
     @Column
     private LocalDateTime updatedAt = LocalDateTime.now(); // 수정시간
 
+    @Column
+    private Double latitude;  // 위도
+
+    @Column
+    private Double longitude; // 경도
+
     @ManyToMany // 다대다
     @JoinTable( // 조인테이블
             name = "diary_emotion", // 중간테이블
             joinColumns = @JoinColumn(name = "diary_id"), // 현재 엔티티(Diary)의 FK가 뭐냐를 지정
-            inverseJoinColumns = @JoinColumn(name = "emotion_id") //상대 엔티티(EmotionTag)의 FK가 뭐냐를 지정
+            inverseJoinColumns = @JoinColumn(name = "emotion_id") // 상대 엔티티(EmotionTag)의 FK가 뭐냐를 지정
     )
-    private Set<EmotionTag> emotionTags = new HashSet<>();
+    private Set<EmotionTag> emotionTags = new HashSet<>(); // 중복 없이 여러 개의 감정 태그를 저장
 
-    @ManyToMany
-    @JoinTable(
-            name = "diary_summary",
-            joinColumns = @JoinColumn(name = "diary_id"),
-            inverseJoinColumns = @JoinColumn(name = "summary_id")
+    @OneToMany(
+            mappedBy = "diary", // SummaryTag 엔티티의 diary 필드가 관계의 주인
+            cascade = CascadeType.ALL, // Diary 저장/삭제 시 SummaryTag도 함께 저장/삭제
+            orphanRemoval = true // Diary에서 제거된 SummaryTag는 DB에서도 삭제
     )
-    // private Set<SummaryTag> summaryTags = new HashSet<>();
+    private List<SummaryTag> summaryTags = new ArrayList<>();  // null 방지용 초기화
 
     // Getters and Setters
     public Long getId() {
@@ -127,12 +134,36 @@ public class Diary {
         this.updatedAt = updatedAt;
     }
 
-//    public Set<Emotion> getEmotionTags() {
-//        return emotionTags;
-//    }
-//
-//    public void setEmotionTags(Set<Emotion> emotionTags) {
-//        this.emotionTags = emotionTags;
-//    }
-// Getters and Setters
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Set<EmotionTag> getEmotionTags() {
+        return emotionTags;
+    }
+
+    public void setEmotionTags(Set<EmotionTag> emotionTags) {
+        this.emotionTags = emotionTags;
+    }
+
+    public List<SummaryTag> getSummaryTags() {
+        return summaryTags;
+    }
+
+    public void setSummaryTags(List<SummaryTag> summaryTags) {
+        this.summaryTags = summaryTags;
+    }
+
 }

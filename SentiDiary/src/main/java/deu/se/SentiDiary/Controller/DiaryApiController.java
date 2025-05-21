@@ -12,10 +12,10 @@ import deu.se.SentiDiary.Service.WeatherService;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -34,7 +34,7 @@ public class DiaryApiController {
         this.weatherService = weatherService;
     }
 
-    @PostMapping("/create") // → POST /api/diary/create
+    @PostMapping // → POST /api/diary/
     public ResponseEntity<String> createDiary(@RequestBody DiaryRequest dto) {
         try {
             Weather weather = weatherService.getById(dto.getWeatherId());
@@ -45,16 +45,15 @@ public class DiaryApiController {
         }
     }
 
-    // 관리자용 전체 조회
-    @GetMapping("/admin")
+    // GET /api/diaries → 전체 일기 조회 (관리자)
+    @GetMapping("/diaries")
     public ResponseEntity<List<DiaryResponse>> getAllDiaries() {
         return ResponseEntity.ok(diaryService.getAllDiaries());
     }
 
-    // 사용자용 userid 기준 조회
-    @GetMapping("/userid")
-    public ResponseEntity<List<DiaryResponse>> getUserDiaries(@RequestParam String userId) {
-        List<DiaryResponse> diaries = diaryService.getDiariesByUserId(userId);
-        return ResponseEntity.ok(diaries);
+    // GET /api/users/{userId}/diaries → 특정 사용자 일기 조회
+    @GetMapping("/users/{userId}/diaries")
+    public ResponseEntity<List<DiaryResponse>> getUserDiaries(@PathVariable String userId) {
+        return ResponseEntity.ok(diaryService.getDiariesByUserId(userId));
     }
 }

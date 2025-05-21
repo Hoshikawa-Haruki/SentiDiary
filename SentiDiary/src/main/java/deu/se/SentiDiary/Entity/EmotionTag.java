@@ -23,7 +23,7 @@ public class EmotionTag {
     @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @ManyToMany(mappedBy = "emotionTags")
+    @ManyToMany(mappedBy = "emotionTags") // Diary의 필드명과 일치해야함
     private Set<Diary> diaries = new HashSet<>();
 
     // 기본 생성자
