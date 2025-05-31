@@ -19,7 +19,7 @@ public class DiaryRequest {
     private String title;
     private String content;
     private Boolean viewScope;
-    private Long weatherId;
+    private int weatherId; // 숫자형으로 변경
     private List<Long> emotionTagIds;      // 감정 태그 ID 리스트 (기존 EmotionTag에서 선택)
     private List<String> summaryKeywords;  // 요약 키워드 문자열 리스트 (일기마다 새로 생성)
     private Double latitude;
@@ -61,11 +61,11 @@ public class DiaryRequest {
         this.viewScope = viewScope;
     }
 
-    public Long getWeatherId() {
+    public int getWeatherId() {
         return weatherId;
     }
 
-    public void setWeatherId(Long weatherId) {
+    public void setWeatherId(int weatherId) {
         this.weatherId = weatherId;
     }
 

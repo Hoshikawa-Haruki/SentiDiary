@@ -13,7 +13,6 @@ import deu.se.SentiDiary.DTO.DiaryResponse;
 import deu.se.SentiDiary.Entity.Diary;
 import deu.se.SentiDiary.Entity.EmotionTag;
 import deu.se.SentiDiary.Entity.SummaryTag;
-import deu.se.SentiDiary.Entity.Weather;
 import deu.se.SentiDiary.Repository.DiaryRepository;
 import deu.se.SentiDiary.Repository.EmotionTagRepository;
 import deu.se.SentiDiary.Repository.SummaryTagRepository;
@@ -40,63 +39,59 @@ public class DiaryService {
     @Autowired
     SummaryTagRepository summaryTagRepository;
 
+    //Optional : 일기가 없을수도 있을 경우
     public Optional<Diary> getDiaryById(Long id) {
         return diaryRepository.findById(id);
     }
 
     // 일기 생성
-    public void createDiary(DiaryRequest dto, Weather weather) {
+    public void createDiary(DiaryRequest dto) {
         Diary diary = new Diary();
         diary.setUserId(dto.getUserId());
         diary.setTitle(dto.getTitle());
         diary.setContent(dto.getContent());
         diary.setViewScope(dto.getViewScope());
-        diary.setWeather(weather);
+        diary.setWeatherId(dto.getWeatherId()); // int형 weather
         diary.setLatitude(dto.getLatitude());
         diary.setLongitude(dto.getLongitude());
         diary.setCreatedAt(LocalDateTime.now());
         diary.setUpdatedAt(LocalDateTime.now());
 
-        // 1. 감정 태그 연결 (다대다 관계)
-        if (dto.getEmotionTagIds() != null) {  // 감정 태그 ID 목록이 null이 아닌 경우에만 처리
-            Set<EmotionTag> emotionTags = dto.getEmotionTagIds().stream() // 리스트를 스트림으로 변환
-                    .map(id
-                            -> // 감정 태그 ID로 DB에서 조회. 없으면 예외 발생
-                            emotionTagRepository.findById(id)
-                            .orElseThrow(() -> new RuntimeException("존재하지 않는 감정 태그"))
-                    )
-                    .collect(Collectors.toSet());  // 결과를 Set으로 수집해서 중복 제거 + 저장
-
-            diary.setEmotionTags(emotionTags);  // Diary에 감정 태그 연결
+        // 감정 태그 처리
+        if (dto.getEmotionTagIds() != null) {
+            Set<EmotionTag> emotionTags = dto.getEmotionTagIds().stream()
+                    .map(id -> emotionTagRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 감정 태그")))
+                    .collect(Collectors.toSet());
+            diary.setEmotionTags(emotionTags);
         }
 
-        // 2. 요약 태그 생성 및 연결 (일대다 관계)
-        if (dto.getSummaryKeywords() != null) { // null이 아닌 경우만
+        // 요약 태그 처리
+        if (dto.getSummaryKeywords() != null) {
             List<SummaryTag> summaryTags = dto.getSummaryKeywords().stream()
-                    .distinct() // 중복제거
+                    .distinct()
                     .map(content -> {
                         SummaryTag tag = new SummaryTag();
                         tag.setContent(content);
-                        tag.setDiary(diary);  // ★ 중요
+                        tag.setDiary(diary);
                         return tag;
                     })
                     .collect(Collectors.toList());
-
-            diary.setSummaryTags(summaryTags); // ★ 반드시 설정
+            diary.setSummaryTags(summaryTags);
         }
 
-        diaryRepository.save(diary); // Cascade.ALL 덕분에 SummaryTag도 저장
+        diaryRepository.save(diary);
     }
-    // 일기 수정
 
-    public void updateDiary(Long id, DiaryRequest dto, Weather weather) {
+    // 일기 수정
+    public void updateDiary(Long id, DiaryRequest dto) {
         Diary diary = diaryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Diary not found"));
 
         diary.setTitle(dto.getTitle());
         diary.setContent(dto.getContent());
         diary.setViewScope(dto.getViewScope());
-        diary.setWeather(weather);
+        diary.setWeatherId(dto.getWeatherId()); // int형 반환으로 변경
         diary.setUpdatedAt(LocalDateTime.now());
 
         diaryRepository.save(diary);
@@ -115,7 +110,8 @@ public class DiaryService {
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
-
+    
+    // 일기 JSON화 메서드. 일기 반환시 전부 사용됨
     // DTO 직렬화 : Java 객체(DiaryResponse 등)를 JSON 문자열로 변환하는 과정
     private DiaryResponse convertToResponse(Diary diary) {
         DiaryResponse dto = new DiaryResponse();
@@ -126,9 +122,20 @@ public class DiaryService {
         dto.setViewScope(diary.getViewScope());
         dto.setCreatedAt(diary.getCreatedAt().toString());
         dto.setUpdatedAt(diary.getUpdatedAt().toString());
-        if (diary.getWeather() != null) {
-            dto.setWeatherName(diary.getWeather().getName());
-        }
+        dto.setWeatherId(diary.getWeatherId()); // 일기 id 반환
+        dto.setLatitude(diary.getLatitude()); // 위도 & 경도
+        dto.setLongitude(diary.getLongitude());
+
+        dto.setEmotionTagIds( // 감정 태그 반환
+                diary.getEmotionTags().stream()
+                        .map(EmotionTag::getId)
+                        .collect(Collectors.toList())
+        );
+        dto.setSummaryKeywords( // 요약 태그 반환
+                diary.getSummaryTags().stream()
+                        .map(SummaryTag::getContent)
+                        .collect(Collectors.toList())
+        );
         return dto;
     }
 

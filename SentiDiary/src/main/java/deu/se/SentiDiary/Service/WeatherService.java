@@ -5,7 +5,7 @@
 package deu.se.SentiDiary.Service;
 
 /**
- *
+ * 05.30 weather 테이블 제거
  * @author Haruki
  */
 import deu.se.SentiDiary.Entity.Weather;

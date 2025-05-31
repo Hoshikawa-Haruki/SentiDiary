@@ -6,10 +6,9 @@ package deu.se.SentiDiary.Controller;
 
 import deu.se.SentiDiary.DTO.DiaryRequest;
 import deu.se.SentiDiary.DTO.DiaryResponse;
-import deu.se.SentiDiary.Entity.Weather;
 import deu.se.SentiDiary.Service.DiaryService;
-import deu.se.SentiDiary.Service.WeatherService;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,19 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/diary")
 public class DiaryApiController {
 
-    private final DiaryService diaryService;
-    private final WeatherService weatherService;
-
-    public DiaryApiController(DiaryService diaryService, WeatherService weatherService) {
-        this.diaryService = diaryService;
-        this.weatherService = weatherService;
-    }
+    @Autowired
+    private DiaryService diaryService;
 
     @PostMapping // → POST /api/diary/
     public ResponseEntity<String> createDiary(@RequestBody DiaryRequest dto) {
         try {
-            Weather weather = weatherService.getById(dto.getWeatherId());
-            diaryService.createDiary(dto, weather);
+            diaryService.createDiary(dto);
             return ResponseEntity.status(201).body("일기 저장 성공"); // 201 Created
         } catch (Exception e) {
             return ResponseEntity.status(400).body("일기 저장 실패: " + e.getMessage());

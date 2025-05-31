@@ -5,7 +5,7 @@
 package deu.se.SentiDiary.Repository;
 
 /**
- *
+ * 05.30 weather 다대다 테이블 제거
  * @author Haruki
  */
 import deu.se.SentiDiary.Entity.Diary;

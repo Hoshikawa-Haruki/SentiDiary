@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- *
+ * 05.30 weather 테이블 제거됨
  * @author Haruki
  */
 @Entity

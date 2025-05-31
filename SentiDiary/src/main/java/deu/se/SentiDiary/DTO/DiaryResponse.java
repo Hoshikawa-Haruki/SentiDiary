@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * 서버에서 처리한 일기 정보를 클라이언트에게 JSON으로 응답할 때 사용 (GET 응답 등)
+ *
  * @author Haruki
  */
 public class DiaryResponse {
@@ -19,7 +20,11 @@ public class DiaryResponse {
     private Boolean viewScope;
     private String createdAt;
     private String updatedAt;
-    private String weatherName;  // 연관된 Weather 객체의 name -> 나중에 url 등으로 수정
+    private int weatherId;  // 숫자형으로 변경
+    private List<Long> emotionTagIds;
+    private List<String> summaryKeywords;
+    private Double latitude;
+    private Double longitude;
 
     // Getters & Setters
     public Long getId() {
@@ -54,6 +59,14 @@ public class DiaryResponse {
         this.content = content;
     }
 
+    public int getWeatherId() {
+        return weatherId;
+    }
+
+    public void setWeatherId(int weatherId) {
+        this.weatherId = weatherId;
+    }
+
     public Boolean getViewScope() {
         return viewScope;
     }
@@ -78,11 +91,36 @@ public class DiaryResponse {
         this.updatedAt = updatedAt;
     }
 
-    public String getWeatherName() {
-        return weatherName;
+    public List<Long> getEmotionTagIds() {
+        return emotionTagIds;
     }
 
-    public void setWeatherName(String weatherName) {
-        this.weatherName = weatherName;
+    public void setEmotionTagIds(List<Long> emotionTagIds) {
+        this.emotionTagIds = emotionTagIds;
     }
+
+    public List<String> getSummaryKeywords() {
+        return summaryKeywords;
+    }
+
+    public void setSummaryKeywords(List<String> summaryKeywords) {
+        this.summaryKeywords = summaryKeywords;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+    
 }
