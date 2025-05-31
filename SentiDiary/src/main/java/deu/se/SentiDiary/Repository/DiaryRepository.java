@@ -6,6 +6,7 @@ package deu.se.SentiDiary.Repository;
 
 /**
  * 05.30 weather 다대다 테이블 제거
+ *
  * @author Haruki
  */
 import deu.se.SentiDiary.Entity.Diary;
@@ -15,6 +16,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
-    // 커스텀 쿼리 메서드 추가 가능
+
+    // 사용다자의 일기를 아이디 기준 조회
     List<Diary> findByUserId(String userId);
+    // 사용자의 일기를 날짜순(desc)로 조회
+    List<Diary> findByUserIdOrderByDiaryDateDesc(String userId);
+
 }

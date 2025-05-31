@@ -7,7 +7,7 @@ package deu.se.SentiDiary.DTO;
 import java.util.List;
 
 /**
- * 서버에서 처리한 일기 정보를 클라이언트에게 JSON으로 응답할 때 사용 (GET 응답 등)
+ * 서버에서 처리한 일기 정보를 클라이언트에게 JSON으로 응답할 때 사용 (GET 응답 등) 백엔드 => 클라이언트
  *
  * @author Haruki
  */
@@ -15,6 +15,7 @@ public class DiaryResponse {
 
     private Long id;
     private String userId;
+    private String diaryDate;
     private String title;
     private String content;
     private Boolean viewScope;
@@ -41,6 +42,14 @@ public class DiaryResponse {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getDiaryDate() {
+        return diaryDate;
+    }
+
+    public void setDiaryDate(String diaryDate) {
+        this.diaryDate = diaryDate;
     }
 
     public String getTitle() {
@@ -122,5 +131,5 @@ public class DiaryResponse {
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
-    
+
 }
