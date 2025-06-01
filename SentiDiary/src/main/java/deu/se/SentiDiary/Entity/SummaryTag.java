@@ -27,7 +27,7 @@ public class SummaryTag {
     private String content;  // 예: "개발", "아이스크림"
 
     @ManyToOne
-    @JoinColumn(name = "diary_id")
+    @JoinColumn(name = "diary_id", nullable = false)
     private Diary diary;
 
     // Getter, Setter

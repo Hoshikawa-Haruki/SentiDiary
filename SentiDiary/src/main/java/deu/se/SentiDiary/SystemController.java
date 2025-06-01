@@ -27,4 +27,9 @@ public class SystemController {
     public String createDiary() {
         return "createDiary";
     }
+    
+    @GetMapping("kakao/login")
+    public String kakaoLogin(){
+        return "kakaologin";
+    }
 }

@@ -21,6 +21,8 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -43,6 +45,7 @@ public class DiaryService {
     }
 
     // 1. 일기 작성
+    @Transactional
     public void createDiary(DiaryRequest dto) {
         Diary diary = new Diary();
         diary.setUserId(dto.getUserId());
@@ -59,24 +62,29 @@ public class DiaryService {
 
         // 감정 태그 처리
         if (dto.getEmotionTagIds() != null) {
-            Set<EmotionTag> emotionTags = dto.getEmotionTagIds().stream()
-                    .map(id -> emotionTagRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("존재하지 않는 감정 태그")))
-                    .collect(Collectors.toSet());
+            Set<EmotionTag> emotionTags = new HashSet<>();
+            for (Long tagId : dto.getEmotionTagIds()) {
+                EmotionTag tag = emotionTagRepository.findById(tagId)
+                        .orElseThrow(() -> new RuntimeException("존재하지 않는 감정 태그: " + tagId));
+                emotionTags.add(tag);
+            }
             diary.setEmotionTags(emotionTags);
         }
 
         // 요약 태그 처리
         if (dto.getSummaryKeywords() != null) {
-            List<SummaryTag> summaryTags = dto.getSummaryKeywords().stream()
-                    .distinct()
-                    .map(content -> {
-                        SummaryTag tag = new SummaryTag();
-                        tag.setContent(content);
-                        tag.setDiary(diary);
-                        return tag;
-                    })
-                    .collect(Collectors.toList());
+            List<SummaryTag> summaryTags = new ArrayList<>();
+
+            for (String content : dto.getSummaryKeywords()) {
+                if (content == null || content.trim().isEmpty()) {
+                    continue; // optional: 빈 문자열 방지
+                }
+                SummaryTag tag = new SummaryTag();
+                tag.setContent(content);
+                tag.setDiary(diary);
+                summaryTags.add(tag);
+            }
+
             diary.setSummaryTags(summaryTags);
         }
 
@@ -102,12 +110,14 @@ public class DiaryService {
         diary.setLongitude(dto.getLongitude());
         diary.setUpdatedAt(LocalDateTime.now());  // 수정 시점만 갱신
 
-        // 3) 감정 태그 갱신
+        // 3) 감정 태그 갱신 (for-each로 통일)
         if (dto.getEmotionTagIds() != null) {
-            Set<EmotionTag> emotionTags = dto.getEmotionTagIds().stream()
-                    .map(tagId -> emotionTagRepository.findById(tagId) // json 에서 보낸 감정요약 id
-                    .orElseThrow(() -> new IllegalArgumentException("감정 태그를 찾을 수 없습니다: " + tagId)))
-                    .collect(Collectors.toSet());
+            Set<EmotionTag> emotionTags = new HashSet<>();
+            for (Long tagId : dto.getEmotionTagIds()) {
+                EmotionTag tag = emotionTagRepository.findById(tagId)
+                        .orElseThrow(() -> new IllegalArgumentException("감정 태그를 찾을 수 없습니다: " + tagId));
+                emotionTags.add(tag);
+            }
             diary.setEmotionTags(emotionTags);
         }
 
@@ -122,6 +132,7 @@ public class DiaryService {
                 tag.setDiary(diary);
                 summaryTags.add(tag);  // 기존 list에 추가
             }
+            diary.setSummaryTags(summaryTags);  // 연관관계 유지
         }
 
         // 5) 저장 (선택적으로 호출 가능, JPA 변경 감지로 자동 반영되기도 함)
@@ -150,6 +161,7 @@ public class DiaryService {
     }
 
     // 6. 일기 삭제 (사용자 ID기준)
+    @Transactional
     public void deleteDiary(Long id) {
         diaryRepository.deleteById(id);
     }
