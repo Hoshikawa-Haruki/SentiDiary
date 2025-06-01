@@ -21,15 +21,15 @@ public class SystemController {
         log.info("● index is called...");
         return "index";
     }
-    
+
     // 백엔드용
     @GetMapping("/createDiary")
     public String createDiary() {
         return "createDiary";
     }
-    
-    @GetMapping("kakao/login")
-    public String kakaoLogin(){
+
+    @GetMapping("/kakaoLoginPage")
+    public String kakaoLogin() {
         return "kakaologin";
     }
 }
