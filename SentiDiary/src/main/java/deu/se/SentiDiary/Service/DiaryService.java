@@ -24,11 +24,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 @Service
 public class DiaryService {
 
@@ -164,6 +167,23 @@ public class DiaryService {
     @Transactional
     public void deleteDiary(Long id) {
         diaryRepository.deleteById(id);
+    }
+
+    // 7. 일기 단건조회
+    public DiaryResponse getDiaryByUserIdAndDiaryId(String userId, Long diaryId) {
+        log.info("[Service] 특정 일기 조회: userId={}, diaryId={}", userId, diaryId);
+
+        Diary diary = diaryRepository.findByIdAndUserId(diaryId, userId)
+                .orElseThrow(() -> new RuntimeException("해당 일기를 찾을 수 없습니다."));
+
+        return convertToResponse(diary);
+    }
+
+    // 8. 들춰보기
+    public DiaryResponse getAnyPublicDiary() {
+        Diary diary = diaryRepository.findRandomPublicDiary()
+                .orElseThrow(() -> new NoSuchElementException("공개된 일기가 없습니다."));
+        return convertToResponse(diary);
     }
 
     // 일기 JSON화 메서드. 일기 반환시 사용

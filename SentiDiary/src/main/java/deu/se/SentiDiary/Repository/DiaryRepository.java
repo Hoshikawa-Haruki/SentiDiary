@@ -11,7 +11,9 @@ package deu.se.SentiDiary.Repository;
  */
 import deu.se.SentiDiary.Entity.Diary;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,5 +23,10 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     List<Diary> findByUserId(String userId);
     // 사용자의 일기를 날짜순(desc)로 조회
     List<Diary> findByUserIdOrderByDiaryDateDesc(String userId);
-
+    
+    // 사용자의 일기 단건조회
+    Optional<Diary> findByIdAndUserId(Long id, String userId);
+    // 들춰보기
+    @Query(value = "SELECT * FROM diary WHERE view_scope = true ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    Optional<Diary> findRandomPublicDiary();
 }

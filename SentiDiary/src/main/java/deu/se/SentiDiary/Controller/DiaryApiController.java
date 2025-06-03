@@ -82,4 +82,19 @@ public class DiaryApiController {
             return ResponseEntity.status(400).body("일기 삭제 실패: " + e.getMessage());
         }
     }
+
+    // 7. 사용자 일기 단건 조회 (update용)
+    @GetMapping("/users/{userId}/diaries/{diaryId}")
+    public ResponseEntity<DiaryResponse> getDiaryByUserIdAndDiaryId(
+            @PathVariable String userId,
+            @PathVariable Long diaryId) {
+        return ResponseEntity.ok(diaryService.getDiaryByUserIdAndDiaryId(userId, diaryId));
+    }
+
+    // 8. 들춰보기
+    @GetMapping("/random")
+    public ResponseEntity<DiaryResponse> getRandomPublicDiary() {
+        DiaryResponse diary = diaryService.getAnyPublicDiary();
+        return ResponseEntity.ok(diary);
+    }
 }
