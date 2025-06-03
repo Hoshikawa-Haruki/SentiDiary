@@ -51,7 +51,7 @@ public class KakaoLoginService {
         
         String kakaoId = profileJson.get("id").asText();
         String nickname = profileJson.path("properties").path("nickname").asText();
-        String userId = "kakao_" + kakaoId;
+        String userId = "kakao_" + kakaoId; // 카카오_고유번호 형식
 
         // 3) 회원 여부 확인 및 세션 처리
         if (userRepository.findByUserid(userId).isPresent()) {

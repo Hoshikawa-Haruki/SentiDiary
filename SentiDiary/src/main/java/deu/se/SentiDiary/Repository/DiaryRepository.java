@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
-    // 사용다자의 일기를 아이디 기준 조회
+    // 사용자의 일기를 아이디 기준 조회
     List<Diary> findByUserId(String userId);
     // 사용자의 일기를 날짜순(desc)로 조회
     List<Diary> findByUserIdOrderByDiaryDateDesc(String userId);
