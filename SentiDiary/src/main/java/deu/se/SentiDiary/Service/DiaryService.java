@@ -57,11 +57,12 @@ public class DiaryService {
         diary.setTitle(dto.getTitle());
         diary.setContent(dto.getContent());
         diary.setViewScope(dto.getViewScope());
-        diary.setWeatherId(dto.getWeatherId()); // int형 weather
+        diary.setWeatherId(dto.getWeatherId());
         diary.setLatitude(dto.getLatitude());
         diary.setLongitude(dto.getLongitude());
-        diary.setCreatedAt(LocalDateTime.now());
-        diary.setUpdatedAt(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now(); // 작성 시간
+        diary.setCreatedAt(now);
+        diary.setUpdatedAt(now);
 
         // 감정 태그 처리
         if (dto.getEmotionTagIds() != null) {
@@ -185,7 +186,7 @@ public class DiaryService {
                 .orElseThrow(() -> new NoSuchElementException("공개된 일기가 없습니다."));
         return convertToResponse(diary);
     }
-    
+
     // 9. 사용자의 일기 날짜기준 조회
     public List<DiaryResponse> getDiariesByDate(String userId, LocalDate diaryDate) {
         List<Diary> diaries = diaryRepository.findByUserIdAndDiaryDate(userId, diaryDate);
