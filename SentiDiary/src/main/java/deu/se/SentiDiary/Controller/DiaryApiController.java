@@ -58,8 +58,8 @@ public class DiaryApiController {
         }
     }
 
-    // 3. 전체 일기 조회 (관리자) [관리자]
-    // GET /api/diaries → 전체 일기 조회 (관리자)
+    // DiaryRepository : 1. 전체일기 조회 (관리자) [관리자]
+    // GET /api/diaries
     @GetMapping
     public ResponseEntity<List<DiaryResponse>> getAllDiaries() {
         log.info("[전체 일기 조회 요청 - 관리자]");
@@ -67,13 +67,32 @@ public class DiaryApiController {
         //ResponseEntity.ok : 성공 응답(200)코드와 본문(JSON) 반환
     }
 
-    // 5. 전체 일기 날짜순 desc 조회 (사용자 ID 기준) [유저, 관리자]
+    // DiaryRepository : 2. 전체일기 아이디 기준 최신순 조회 (사용자 ID 기준) [유저, 관리자]
     @GetMapping("/users/{userId}")
     public ResponseEntity<List<DiaryResponse>> getDiariesByUserIdAndDateDesc(@PathVariable String userId) {
         return ResponseEntity.ok(diaryService.getDiariesByUserIdAndDateDesc(userId));
     }
 
-    // 6. 일기 삭제 [유저, 관리자]
+    // DiaryRepository : 3. 사용자 단건일기 아이디 기준 조회
+    @GetMapping("/users/{userId}/diaries/{diaryId}")
+    public ResponseEntity<DiaryResponse> getDiaryByUserIdAndDiaryId(
+            @PathVariable String userId,
+            @PathVariable Long diaryId) {
+        log.info("[단건 일기 조회 요청] userId={}, diaryId={}", userId, diaryId);
+        return ResponseEntity.ok(diaryService.getDiaryByUserIdAndDiaryId(userId, diaryId));
+    }
+
+    // DiaryRepository : 4. 사용자의 특정일기 아이디+날짜 기준 최신순 조회
+    @GetMapping("/users/{userId}/date/{diaryDate}")
+    public ResponseEntity<List<DiaryResponse>> getDiariesByDate(
+            @PathVariable String userId,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate diaryDate) {
+        log.info("[날짜 기준 일기 조회 요청] userId={}, diaryDate={}", userId, diaryDate);
+        List<DiaryResponse> diaries = diaryService.getDiariesByDateDesc(userId, diaryDate);
+        return ResponseEntity.ok(diaries);
+    }
+
+    // 3. 일기 삭제 [유저, 관리자]
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDiary(@PathVariable Long id) {
         log.info("[일기 삭제 요청] diaryId={}", id);
@@ -85,31 +104,11 @@ public class DiaryApiController {
         }
     }
 
-    // 7. 사용자 일기 단건 조회 (update용)
-    @GetMapping("/users/{userId}/diaries/{diaryId}")
-    public ResponseEntity<DiaryResponse> getDiaryByUserIdAndDiaryId(
-            @PathVariable String userId,
-            @PathVariable Long diaryId) {
-        log.info("[단건 일기 조회 요청] userId={}, diaryId={}", userId, diaryId);
-        return ResponseEntity.ok(diaryService.getDiaryByUserIdAndDiaryId(userId, diaryId));
-    }
-
-    // 8. 들춰보기 [유저]
+    // 4. 들춰보기 [유저]
     @GetMapping("/random")
     public ResponseEntity<DiaryResponse> getRandomPublicDiary() {
         log.info("[들춰보기 요청]");
         DiaryResponse diary = diaryService.getAnyPublicDiary();
         return ResponseEntity.ok(diary);
     }
-
-    // 9. 날짜 기준 일기 조회 [유저]
-    @GetMapping("/api/diary/users/{userId}/date/{diaryDate}")
-    public ResponseEntity<List<DiaryResponse>> getDiariesByDate(
-            @PathVariable String userId,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate diaryDate) {
-        log.info("[날짜 기준 일기 조회 요청] userId={}, diaryDate={}", userId, diaryDate);
-        List<DiaryResponse> diaries = diaryService.getDiariesByDate(userId, diaryDate);
-        return ResponseEntity.ok(diaries);
-    }
-
 }

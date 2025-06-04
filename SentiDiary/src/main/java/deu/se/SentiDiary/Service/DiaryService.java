@@ -143,53 +143,51 @@ public class DiaryService {
         diaryRepository.save(diary);
     }
 
-    // 3. 전체 일기 조회 (관리자)
+    // DiaryRepository 1. 전체 일기 조회 (관리자)
     public List<DiaryResponse> getAllDiaries() {
         return diaryRepository.findAll().stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    // 4. 전체 일기 조회 (사용자 ID 기준)
+    // 3. 사용자의 전체일기 아이디 기준 조회
+    // (현재 사용 X)
     public List<DiaryResponse> getDiariesByUserId(String userId) {
         return diaryRepository.findByUserId(userId).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    // 5. 전체 일기 날짜순 desc 조회 (사용자 ID 기준)
+    // DiaryRepository 2. 사용자의 전체일기 아이디 기준 최신순 조회
     public List<DiaryResponse> getDiariesByUserIdAndDateDesc(String userId) {
         return diaryRepository.findByUserIdOrderByDiaryDateDesc(userId).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    // 6. 일기 삭제 (사용자 ID기준)
+    // 3. 일기 삭제 (사용자 ID기준)
     @Transactional
     public void deleteDiary(Long id) {
         diaryRepository.deleteById(id);
     }
 
-    // 7. 일기 단건조회
+    // DiaryRepository : 3. 사용자 단건일기 아이디 기준 조회
     public DiaryResponse getDiaryByUserIdAndDiaryId(String userId, Long diaryId) {
-        log.info("[Service] 특정 일기 조회: userId={}, diaryId={}", userId, diaryId);
-
         Diary diary = diaryRepository.findByIdAndUserId(diaryId, userId)
                 .orElseThrow(() -> new RuntimeException("해당 일기를 찾을 수 없습니다."));
-
         return convertToResponse(diary);
     }
 
-    // 8. 들춰보기
+    // 4. 들춰보기
     public DiaryResponse getAnyPublicDiary() {
         Diary diary = diaryRepository.findRandomPublicDiary()
                 .orElseThrow(() -> new NoSuchElementException("공개된 일기가 없습니다."));
         return convertToResponse(diary);
     }
 
-    // 9. 사용자의 일기 날짜기준 조회
-    public List<DiaryResponse> getDiariesByDate(String userId, LocalDate diaryDate) {
-        List<Diary> diaries = diaryRepository.findByUserIdAndDiaryDate(userId, diaryDate);
+    // DiaryRepository : 4. 사용자의 특정일기 아이디+날짜 기준 최신순 조회
+    public List<DiaryResponse> getDiariesByDateDesc(String userId, LocalDate diaryDate) {
+        List<Diary> diaries = diaryRepository.findByUserIdAndDiaryDateOrderByUpdatedAtDesc(userId, diaryDate);
         return diaries.stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
