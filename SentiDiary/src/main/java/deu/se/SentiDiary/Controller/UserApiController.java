@@ -4,28 +4,26 @@
  */
 package deu.se.SentiDiary.Controller;
 
-import deu.se.SentiDiary.Service.UserService;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author Haruki
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/api/user")
 public class UserApiController {
 
-    @Autowired
-    private UserService userService;
-
-    @PostMapping("/register_confirm")
-    public String registerConfirm(HttpSession session) {
-        return userService.registerUser(session);
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        // 인증된 사용자 ID 가져오기 (JwtAuthFilter에서 set한 userId)
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok("✅ JWT 인증 성공! userId: " + userId);
     }
 }

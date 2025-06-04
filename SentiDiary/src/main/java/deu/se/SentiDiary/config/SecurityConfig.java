@@ -17,8 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Spring Security 설정 클래스
  *
- * - 세션 미사용 (stateless) - JWT 필터 적용 - 특정 경로는 인증 없이 허용
- *
  * @author Haruki
  */
 @Configuration
@@ -33,13 +31,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll()
+                .requestMatchers("/auth/**", "/kakao/**").permitAll() // 로그인 관련 API만 허용
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasRole("USER")
+                .requestMatchers("/SentiDiary/api/diary/**").hasRole("USER") // 일기 CRUD 보호
                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }

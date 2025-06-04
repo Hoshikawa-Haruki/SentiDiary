@@ -6,8 +6,10 @@ package deu.se.SentiDiary.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import deu.se.SentiDiary.Entity.User;
 import deu.se.SentiDiary.Repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
+import deu.se.SentiDiary.util.JwtUtil;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,37 +36,48 @@ public class KakaoLoginService {
 
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
-    
+
     @Autowired
     private UserRepository userRepository;
-    
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public String handleKakaoLogin(String code, HttpSession session) throws Exception {
+    public ResponseEntity<?> handleKakaoLogin(String code) throws Exception {
         // 1) 액세스 토큰 요청
         String accessToken = getAccessToken(code);
 
         // 2) 사용자 정보 요청
         JsonNode profileJson = getUserProfile(accessToken);
         log.info("[INFO] 카카오 사용자 정보 JSON: {}", profileJson.toPrettyString());
-        
+
         String kakaoId = profileJson.get("id").asText();
         String nickname = profileJson.path("properties").path("nickname").asText();
         String userId = "kakao_" + kakaoId; // 카카오_고유번호 형식
 
-        // 3) 회원 여부 확인 및 세션 처리
-        if (userRepository.findByUserid(userId).isPresent()) {
-            log.info("기존 사용자 로그인 성공: {} (kakao_{})", nickname, kakaoId);  // 로그인 로그 유지
-            session.setAttribute("userid", userId);
-            session.setAttribute("nickname", nickname);
-            return "loginSuccess";
-        } else {
-            log.info("신규 사용자 → 회원가입 페이지로 이동: {} (kakao_{})", nickname, kakaoId);  // 회원가입 전 진입 로그
-            session.setAttribute("temp_userid", userId);
-            session.setAttribute("temp_nickname", nickname);
-            return "register";
-        }
+        // 3) DB 조회 및 자동 회원가입 처리
+        User user = userRepository.findByUserid(userId).orElseGet(() -> {
+            log.info("[신규 사용자] DB에 회원 정보가 없어서 자동 가입 진행 → {}", userId);
+            User newUser = new User();
+            newUser.setUserid(userId);
+            newUser.setNickname(nickname);
+            newUser.setRole("USER");
+            return userRepository.save(newUser);
+        });
+
+        // 4) JWT 발급
+        String role = user.getRole();  // DB에서 실제 권한 가져오기
+        String token = jwtUtil.createToken(userId, role); // 토큰 생성
+
+        // 5) 응답
+        return ResponseEntity.ok(Map.of(
+                "token", token, // jwt 토큰
+                "userId", userId, // userid (없애도 됨)
+                "nickname", nickname // 토큰에는 X
+        ));
     }
 
     private String getAccessToken(String code) throws Exception {

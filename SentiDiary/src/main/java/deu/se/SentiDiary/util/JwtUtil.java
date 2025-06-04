@@ -16,12 +16,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * JWT 유틸리티 클래스
- *
- * 이 클래스는 JWT 토큰을 생성하고, 토큰 유효성 검증 및 클레임(Claims) 추출 기능을 제공합니다. - HS256 알고리즘을 사용하여
- * JWT 서명 - JWT에 사용자 ID 및 역할(role) 정보를 포함 - 만료 시간은 기본적으로 1시간으로 설정
- *
- * 사용 예시: String token = jwtUtil.createToken("userid123", "USER"); Claims claims
- * = jwtUtil.validateToken(token);
+ * JWT 토큰 생성을 담당하고, 토큰 유혀성 검증 및 클레임 추출 기능 제공
  *
  * @author Haruki
  */

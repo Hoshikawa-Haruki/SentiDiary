@@ -21,10 +21,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * JWT 인증 필터
- *
- * 매 요청마다 Authorization 헤더에 포함된 JWT를 검사하고, 유효한 경우 SecurityContext에 인증 정보를
- * 설정해줍니다. 유효하지 않은 경우 401 에러 반환
+ * JWT 인증 필터 매 요청마다 Authorization 헤더에 포함된 JWT를 검사하고, 유효한 경우 SecurityContext에 인증
+ * 정보를 설정해줍니다. 유효하지 않은 경우 401 에러 반환
  *
  * @author Haruki
  */

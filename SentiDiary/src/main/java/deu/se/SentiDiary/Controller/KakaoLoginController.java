@@ -1,16 +1,15 @@
 package deu.se.SentiDiary.Controller;
 
-import deu.se.SentiDiary.Repository.UserRepository;
 import deu.se.SentiDiary.Service.KakaoLoginService;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
@@ -23,7 +22,7 @@ public class KakaoLoginController {
 
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
-    
+
     @Autowired
     private KakaoLoginService kakaoLoginService;
 
@@ -37,10 +36,10 @@ public class KakaoLoginController {
                 + "&response_type=code";
         response.sendRedirect(kakaoLoginUrl);
     }
-    
+
     // 2. 콜백 처리
     @GetMapping("/callback")
-    public String kakaoCallback(@RequestParam("code") String code, HttpSession session) throws Exception {
-        return kakaoLoginService.handleKakaoLogin(code, session);
+    public ResponseEntity<?> kakaoCallback(@RequestParam("code") String code) throws Exception {
+        return kakaoLoginService.handleKakaoLogin(code);
     }
 }

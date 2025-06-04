@@ -27,6 +27,17 @@ public class User {
     @Column(length = 255)
     private String profileImage;
 
+    @Column
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public String getUserid() {
         return userid;
     }
