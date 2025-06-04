@@ -185,6 +185,12 @@ public class DiaryService {
                 .orElseThrow(() -> new NoSuchElementException("공개된 일기가 없습니다."));
         return convertToResponse(diary);
     }
+    
+    // 9. 사용자의 일기 날짜기준 조회
+    public List<DiaryResponse> getDiariesByDate(String userId, LocalDate diaryDate) {
+        List<Diary> diaries = diaryRepository.findByUserIdAndDiaryDate(userId, diaryDate);
+        return diaries.stream().map(this::convertToResponse).collect(Collectors.toList());
+    }
 
     // 일기 JSON화 메서드. 일기 반환시 사용
     // DTO 직렬화 : Java 객체(DiaryResponse 등)를 JSON 문자열로 변환하는 과정

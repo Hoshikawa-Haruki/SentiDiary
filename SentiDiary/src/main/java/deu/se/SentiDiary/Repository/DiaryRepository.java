@@ -10,6 +10,7 @@ package deu.se.SentiDiary.Repository;
  * @author Haruki
  */
 import deu.se.SentiDiary.Entity.Diary;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     // 들춰보기
     @Query(value = "SELECT * FROM diary WHERE view_scope = true ORDER BY RAND() LIMIT 1", nativeQuery = true)
     Optional<Diary> findRandomPublicDiary();
+    // 사용자의 일기 날짜 기준 조회
+    List<Diary> findByUserIdAndDiaryDate(String userId, LocalDate diaryDate);
 }
