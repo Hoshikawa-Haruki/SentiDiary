@@ -31,9 +31,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/kakao/**").permitAll() // 로그인 관련 API만 허용
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/SentiDiary/api/diary/**").hasRole("USER") // 일기 CRUD 보호
+                .requestMatchers("/**").permitAll() // 모든 접근 허용
+//                .requestMatchers("/auth/**", "/kakao/**").permitAll() // 로그인 관련 API만 허용
+//                .requestMatchers("/admin/**").hasRole("ADMIN")
+//                .requestMatchers("/SentiDiary/api/diary/**").hasRole("USER") // 일기 CRUD 보호
                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
