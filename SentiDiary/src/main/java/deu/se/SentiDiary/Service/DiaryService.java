@@ -50,8 +50,9 @@ public class DiaryService {
     // 1. 일기 작성
     @Transactional
     public void createDiary(DiaryRequest dto) {
-        Diary diary = new Diary();
         log.info("[일기 작성 요청] : {}", dto.getUserId());
+
+        Diary diary = new Diary();
         diary.setUserId(dto.getUserId());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         diary.setDiaryDate(LocalDate.parse(dto.getDiaryDate(), formatter));
@@ -99,6 +100,8 @@ public class DiaryService {
     // 2. 일기 수정
     @Transactional
     public void updateDiary(Long id, DiaryRequest dto) {
+        log.info("[일기 수정 요청] 일기 번호={}, userId={}", id, dto.getUserId());
+
         // 1) 기존 일기 조회
         Diary diary = diaryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 일기를 찾을 수 없습니다."));
@@ -144,32 +147,32 @@ public class DiaryService {
         diaryRepository.save(diary);
     }
 
-    // DiaryRepository 1. 전체 일기 조회 (관리자)
+    // 3. 일기 삭제 (사용자 ID기준)
+    @Transactional
+    public void deleteDiary(Long id) {
+        diaryRepository.deleteById(id);
+    }
+
+    // 전체 일기 조회 (관리자)
     public List<DiaryResponse> getAllDiaries() {
         return diaryRepository.findAll().stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    // 3. 사용자의 전체일기 아이디 기준 조회
-    // (현재 사용 X)
+    // DiaryRepository : 1. 사용자의 전체일기 아이디 기준 조회
+    // (06.07 기준 사용 X)
     public List<DiaryResponse> getDiariesByUserId(String userId) {
         return diaryRepository.findByUserId(userId).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    // DiaryRepository 2. 사용자의 전체일기 아이디 기준 최신순 조회
+    // DiaryRepository : 2. 사용자의 전체일기 아이디 기준 최신순 조회
     public List<DiaryResponse> getDiariesByUserIdAndDateDesc(String userId) {
         return diaryRepository.findByUserIdOrderByDiaryDateDesc(userId).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
-    }
-
-    // 3. 일기 삭제 (사용자 ID기준)
-    @Transactional
-    public void deleteDiary(Long id) {
-        diaryRepository.deleteById(id);
     }
 
     // DiaryRepository : 3. 사용자 단건일기 아이디 기준 조회
@@ -179,17 +182,17 @@ public class DiaryService {
         return convertToResponse(diary);
     }
 
-    // 4. 들춰보기
-    public DiaryResponse getAnyPublicDiary() {
-        Diary diary = diaryRepository.findRandomPublicDiary()
-                .orElseThrow(() -> new NoSuchElementException("공개된 일기가 없습니다."));
-        return convertToResponse(diary);
-    }
-
     // DiaryRepository : 4. 사용자의 특정일기 아이디+날짜 기준 최신순 조회
     public List<DiaryResponse> getDiariesByDateDesc(String userId, LocalDate diaryDate) {
         List<Diary> diaries = diaryRepository.findByUserIdAndDiaryDateOrderByUpdatedAtDesc(userId, diaryDate);
         return diaries.stream().map(this::convertToResponse).collect(Collectors.toList());
+    }
+
+    // DiaryRepository : 5. 들춰보기
+    public DiaryResponse getAnyPublicDiary() {
+        Diary diary = diaryRepository.findRandomPublicDiary()
+                .orElseThrow(() -> new NoSuchElementException("공개된 일기가 없습니다."));
+        return convertToResponse(diary);
     }
 
     // 일기 JSON화 메서드. 일기 반환시 사용

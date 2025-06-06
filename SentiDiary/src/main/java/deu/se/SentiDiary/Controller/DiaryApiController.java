@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 일기 CRUD 요청 관리 클래스
+ *
  * @author Haruki
  */
 @Slf4j
@@ -42,7 +43,7 @@ public class DiaryApiController {
             // JWT 토큰에서 userId 추출
             String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
             dto.setUserId(userId); // 서버에서 직접 userId 설정
-            
+
             diaryService.createDiary(dto);
             return ResponseEntity.status(201).body("일기 저장 성공"); // 201 Created
         } catch (Exception e) {
@@ -53,53 +54,18 @@ public class DiaryApiController {
     // 2. 일기 수정 [유저]
     @PutMapping("/{id}") // diaryid
     public ResponseEntity<String> updateDiary(@PathVariable Long id, @RequestBody DiaryRequest dto) {
-        log.info("[일기 수정 요청] 일기 번호={}, userId={}", id, dto.getUserId());
         try {
             String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
             dto.setUserId(userId); // 서버에서 직접 userId 설정
-            
+
             diaryService.updateDiary(id, dto);
             return ResponseEntity.ok("일기 수정 성공");
         } catch (Exception e) {
             return ResponseEntity.status(400).body("일기 수정 실패: " + e.getMessage());
         }
     }
-
-    // DiaryRepository : 1. 전체일기 조회 (관리자) [관리자]
-    // GET /api/diaries
-    @GetMapping
-    public ResponseEntity<List<DiaryResponse>> getAllDiaries() {
-        log.info("[전체 일기 조회 요청 - 관리자]");
-        return ResponseEntity.ok(diaryService.getAllDiaries());
-        //ResponseEntity.ok : 성공 응답(200)코드와 본문(JSON) 반환
-    }
-
-    // DiaryRepository : 2. 전체일기 아이디 기준 최신순 조회 (사용자 ID 기준) [유저, 관리자]
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<List<DiaryResponse>> getDiariesByUserIdAndDateDesc(@PathVariable String userId) {
-        return ResponseEntity.ok(diaryService.getDiariesByUserIdAndDateDesc(userId));
-    }
-
-    // DiaryRepository : 3. 사용자 단건일기 아이디 기준 조회
-    @GetMapping("/users/{userId}/diaries/{diaryId}")
-    public ResponseEntity<DiaryResponse> getDiaryByUserIdAndDiaryId(
-            @PathVariable String userId,
-            @PathVariable Long diaryId) {
-        log.info("[단건 일기 조회 요청] userId={}, diaryId={}", userId, diaryId);
-        return ResponseEntity.ok(diaryService.getDiaryByUserIdAndDiaryId(userId, diaryId));
-    }
-
-    // DiaryRepository : 4. 사용자의 특정일기 아이디+날짜 기준 최신순 조회
-    @GetMapping("/users/{userId}/date/{diaryDate}")
-    public ResponseEntity<List<DiaryResponse>> getDiariesByDate(
-            @PathVariable String userId,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate diaryDate) {
-        log.info("[날짜 기준 일기 조회 요청] userId={}, diaryDate={}", userId, diaryDate);
-        List<DiaryResponse> diaries = diaryService.getDiariesByDateDesc(userId, diaryDate);
-        return ResponseEntity.ok(diaries);
-    }
-
     // 3. 일기 삭제 [유저, 관리자]
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDiary(@PathVariable Long id) {
         log.info("[일기 삭제 요청] diaryId={}", id);
@@ -111,7 +77,40 @@ public class DiaryApiController {
         }
     }
 
-    // 4. 들춰보기 [유저]
+    // 전체일기 조회 (관리자) [관리자]
+    @GetMapping
+    public ResponseEntity<List<DiaryResponse>> getAllDiaries() {
+        log.info("[전체 일기 조회 요청 - 관리자]");
+        return ResponseEntity.ok(diaryService.getAllDiaries());
+        //ResponseEntity.ok : 성공 응답(200)코드와 본문(JSON) 반환
+    }
+
+    // DiaryRepository : 2. 사용자의 전체일기 아이디 기준 최신순 조회
+    @GetMapping("/my")
+    public ResponseEntity<List<DiaryResponse>> getDiariesByUserIdAndDateDesc() {
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
+        return ResponseEntity.ok(diaryService.getDiariesByUserIdAndDateDesc(userId));
+    }
+
+    // DiaryRepository : 3. 사용자 단건일기 아이디 기준 조회
+    @GetMapping("/my/diaries/{diaryId}")
+    public ResponseEntity<DiaryResponse> getMyDiaryById(@PathVariable Long diaryId) {
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
+        log.info("[단건 일기 조회 요청] userId={}, diaryId={}", userId, diaryId);
+        return ResponseEntity.ok(diaryService.getDiaryByUserIdAndDiaryId(userId, diaryId));
+    }
+
+    // DiaryRepository : 4. 사용자의 특정일기 아이디+날짜 기준 최신순 조회
+    @GetMapping("/my/date/{diaryDate}")
+    public ResponseEntity<List<DiaryResponse>> getMyDiariesByDate(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate diaryDate) {
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
+        log.info("[날짜 기준 일기 조회 요청] userId={}, diaryDate={}", userId, diaryDate);
+        List<DiaryResponse> diaries = diaryService.getDiariesByDateDesc(userId, diaryDate);
+        return ResponseEntity.ok(diaries);
+    }
+
+    // DiaryRepository : 5. 들춰보기 단건일기 조회
     @GetMapping("/random")
     public ResponseEntity<DiaryResponse> getRandomPublicDiary() {
         log.info("[들춰보기 요청]");
