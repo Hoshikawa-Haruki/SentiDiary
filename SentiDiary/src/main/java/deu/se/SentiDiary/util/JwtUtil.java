@@ -46,7 +46,7 @@ public class JwtUtil {
                 .claim("role", role) // 권한
                 .setIssuedAt(now) // 생성 시간
                 .setExpiration(expiry) // 만료 시간
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256) // HMAC256으로 서명
                 .compact();
     }
 

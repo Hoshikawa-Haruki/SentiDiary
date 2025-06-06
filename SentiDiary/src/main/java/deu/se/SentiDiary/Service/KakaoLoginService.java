@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * 06.06 카카오 인증 및 jwt 발행 클래스
+ *
  * @author Haruki
  */
 @Slf4j
@@ -71,7 +72,8 @@ public class KakaoLoginService {
         // 4) JWT 발급
         String role = user.getRole();  // DB에서 실제 권한 가져오기
         String token = jwtUtil.createToken(userId, role); // 토큰 생성
-
+        log.info("[토큰 발급 완료] userId={}, role={}, tokenPreview={}...", userId, role, token.substring(0, 10));
+        
         // 5) 응답객체 생성해서 반환
         return new KakaoLoginResponse(token, nickname);
     }

@@ -5,7 +5,7 @@
 package deu.se.SentiDiary.DTO;
 
 /**
- *
+ * 06.06 토큰 반환 DTO
  * @author Haruki
  */
 public class KakaoLoginResponse {

@@ -38,7 +38,6 @@ public class DiaryApiController {
     // 1. 일기 작성 [유저]
     @PostMapping
     public ResponseEntity<String> createDiary(@RequestBody DiaryRequest dto) {
-        log.info("[일기 작성 요청] userId={}, title={}", dto.getUserId(), dto.getTitle());
         try {
             // JWT 토큰에서 userId 추출
             String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱

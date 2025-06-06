@@ -51,6 +51,7 @@ public class DiaryService {
     @Transactional
     public void createDiary(DiaryRequest dto) {
         Diary diary = new Diary();
+        log.info("[일기 작성 요청] : {}", dto.getUserId());
         diary.setUserId(dto.getUserId());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         diary.setDiaryDate(LocalDate.parse(dto.getDiaryDate(), formatter));
@@ -196,7 +197,7 @@ public class DiaryService {
     private DiaryResponse convertToResponse(Diary diary) {
         DiaryResponse dto = new DiaryResponse();
         dto.setId(diary.getId());
-        dto.setUserId(diary.getUserId());
+        // dto.setUserId(diary.getUserId());
         dto.setDiaryDate(diary.getDiaryDate().toString());
         dto.setTitle(diary.getTitle());
         dto.setContent(diary.getContent());
