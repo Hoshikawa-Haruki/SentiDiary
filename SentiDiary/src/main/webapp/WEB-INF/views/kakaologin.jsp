@@ -13,7 +13,7 @@
         <title>JSP Page</title>
     </head>
     <!--    <a href="/SentiDiary/kakao/login">-->
-    <a href="https://joint-cheetah-helpful.ngrok-free.app/kakao/login">
+    <a href="https://joint-cheetah-helpful.ngrok-free.app/SentiDiary/kakao/login">
         <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png">
         <br><!-- comment -->카카오 로그인 버튼
     </a>

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
+ * 일기 CRUD 요청 관리 클래스
  * @author Haruki
  */
 @Slf4j
@@ -39,6 +40,10 @@ public class DiaryApiController {
     public ResponseEntity<String> createDiary(@RequestBody DiaryRequest dto) {
         log.info("[일기 작성 요청] userId={}, title={}", dto.getUserId(), dto.getTitle());
         try {
+            // JWT 토큰에서 userId 추출
+            String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
+            dto.setUserId(userId); // 서버에서 직접 userId 설정
+            
             diaryService.createDiary(dto);
             return ResponseEntity.status(201).body("일기 저장 성공"); // 201 Created
         } catch (Exception e) {
@@ -47,10 +52,13 @@ public class DiaryApiController {
     }
 
     // 2. 일기 수정 [유저]
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") // diaryid
     public ResponseEntity<String> updateDiary(@PathVariable Long id, @RequestBody DiaryRequest dto) {
         log.info("[일기 수정 요청] 일기 번호={}, userId={}", id, dto.getUserId());
         try {
+            String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
+            dto.setUserId(userId); // 서버에서 직접 userId 설정
+            
             diaryService.updateDiary(id, dto);
             return ResponseEntity.ok("일기 수정 성공");
         } catch (Exception e) {

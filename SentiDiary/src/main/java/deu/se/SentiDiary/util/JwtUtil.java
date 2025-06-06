@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * JWT 유틸리티 클래스
- * JWT 토큰 생성을 담당하고, 토큰 유혀성 검증 및 클레임 추출 기능 제공
+ * JWT 토큰 생성을 담당하고, 토큰 유효성 검증 및 클레임 추출 기능 제공
  *
  * @author Haruki
  */
@@ -30,7 +30,7 @@ public class JwtUtil {
     private final long expirationMs = 1000 * 60 * 60;
 
     /**
-     * JWT 토큰 생성
+     * 06.06 JWT 토큰 생성
      *
      * @param userId 사용자 ID
      * @param role 사용자 역할 (예: USER, ADMIN)
@@ -42,10 +42,10 @@ public class JwtUtil {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
 
         return Jwts.builder()
-                .setSubject(userId)
-                .claim("role", role)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
+                .setSubject(userId) // 카카오 아이디
+                .claim("role", role) // 권한
+                .setIssuedAt(now) // 생성 시간
+                .setExpiration(expiry) // 만료 시간
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }

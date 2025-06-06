@@ -6,10 +6,10 @@ package deu.se.SentiDiary.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import deu.se.SentiDiary.DTO.KakaoLoginResponse;
 import deu.se.SentiDiary.Entity.User;
 import deu.se.SentiDiary.Repository.UserRepository;
 import deu.se.SentiDiary.util.JwtUtil;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 /**
- *
+ * 06.06 카카오 인증 및 jwt 발행 클래스
  * @author Haruki
  */
 @Slf4j
@@ -46,7 +46,7 @@ public class KakaoLoginService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public ResponseEntity<?> handleKakaoLogin(String code) throws Exception {
+    public KakaoLoginResponse handleKakaoLogin(String code) throws Exception {
         // 1) 액세스 토큰 요청
         String accessToken = getAccessToken(code);
 
@@ -72,12 +72,8 @@ public class KakaoLoginService {
         String role = user.getRole();  // DB에서 실제 권한 가져오기
         String token = jwtUtil.createToken(userId, role); // 토큰 생성
 
-        // 5) 응답
-        return ResponseEntity.ok(Map.of(
-                "token", token, // jwt 토큰
-                "userId", userId, // userid (없애도 됨)
-                "nickname", nickname // 토큰에는 X
-        ));
+        // 5) 응답객체 생성해서 반환
+        return new KakaoLoginResponse(token, nickname);
     }
 
     private String getAccessToken(String code) throws Exception {

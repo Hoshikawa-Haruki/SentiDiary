@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- *
+ * 06.04 통계 기능 클래스
  * @author Haruki
  */
 @Slf4j
