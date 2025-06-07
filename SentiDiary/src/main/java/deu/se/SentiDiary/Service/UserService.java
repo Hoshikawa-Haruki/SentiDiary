@@ -6,7 +6,7 @@ package deu.se.SentiDiary.Service;
 
 import deu.se.SentiDiary.Entity.User;
 import deu.se.SentiDiary.Repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    @Autowired
+     @Autowired
     private UserRepository userRepository;
 
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }

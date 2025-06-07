@@ -9,7 +9,7 @@
             <charset>UTF-8</charset>
             <!-- %msg %l (logback 에서는 %caller) 로 메서드와, 라인을 출력-->
             <!-- 상대 시간(relative time) 로그. 디버깅/성능 측정용 -->
-            <Pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%caller%n</Pattern>
+            <Pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n%caller%n</Pattern>
             <!--운영 로그 파일 저장/분석용-->
             <!--<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} -%msg%caller%n</Pattern>-->
         </encoder>

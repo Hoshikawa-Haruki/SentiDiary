@@ -36,8 +36,23 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     // 5. 들춰보기 단건일기 조회
     @Query(value = "SELECT * FROM diary WHERE view_scope = true ORDER BY RAND() LIMIT 1", nativeQuery = true)
     Optional<Diary> findRandomPublicDiary();
+
+    // 6. 사용자의 제목 기준 검색
+    List<Diary> findByUserIdAndTitleContaining(String userId, String keyword);
+
+    // 7. 사용자의 내용 기준 검색
+    List<Diary> findByUserIdAndContentContaining(String userId, String keyword);
+
+    // 8. 사용자의 제목+내용 기준 검색
+    List<Diary> findByUserIdAndTitleContainingOrContentContaining(String userId, String keyword1, String keyword2);
+
+    // 9. 사용자의 월별 통계 [감정, 요약]
+    List<Diary> findByUserIdAndDiaryDateBetween(String userId, LocalDate start, LocalDate end);
+
+    // 10. 사용자의 감정태그 기준 검색
+    List<Diary> findByUserIdAndEmotionTagsNameContaining(String userId, String tagName);
     
-    // 6. 제목 기준 검색
-    // TODO
+    // 11. 사용자의 요약태그 기준 검색
+    List<Diary> findByUserIdAndSummaryTagsNameContaining(String userId, String tagName);
 
 }

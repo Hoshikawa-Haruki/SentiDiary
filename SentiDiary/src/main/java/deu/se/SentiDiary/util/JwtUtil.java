@@ -58,7 +58,7 @@ public class JwtUtil {
      * @throws JwtException 토큰이 위조되었거나 만료된 경우 발생
      */
     public Claims validateToken(String token) throws JwtException {
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes()); // ✅ 수정됨
+        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes()); // 키를 hmac으로 암호화
 
         return Jwts.parserBuilder()
                 .setSigningKey(key)

@@ -8,6 +8,7 @@ package deu.se.SentiDiary.Service;
  *
  * @author Haruki
  */
+import deu.se.SentiDiary.Converter.DiaryConverter;
 import deu.se.SentiDiary.DTO.DiaryRequest;
 import deu.se.SentiDiary.DTO.DiaryResponse;
 import deu.se.SentiDiary.Entity.Diary;
@@ -15,7 +16,6 @@ import deu.se.SentiDiary.Entity.EmotionTag;
 import deu.se.SentiDiary.Entity.SummaryTag;
 import deu.se.SentiDiary.Repository.DiaryRepository;
 import deu.se.SentiDiary.Repository.EmotionTagRepository;
-import deu.se.SentiDiary.Repository.SummaryTagRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class DiaryService {
     @Autowired
     EmotionTagRepository emotionTagRepository;
     @Autowired
-    SummaryTagRepository summaryTagRepository;
+    private DiaryConverter diaryConverter;
 
     //Optional : 일기가 없을수도 있을 경우
     public Optional<Diary> getDiaryById(Long id) {
@@ -156,7 +156,7 @@ public class DiaryService {
     // 전체 일기 조회 (관리자)
     public List<DiaryResponse> getAllDiaries() {
         return diaryRepository.findAll().stream()
-                .map(this::convertToResponse)
+                .map(diaryConverter::convertToResponse)
                 .collect(Collectors.toList());
     }
 
@@ -164,14 +164,14 @@ public class DiaryService {
     // (06.07 기준 사용 X)
     public List<DiaryResponse> getDiariesByUserId(String userId) {
         return diaryRepository.findByUserId(userId).stream()
-                .map(this::convertToResponse)
+                .map(diaryConverter::convertToResponse)
                 .collect(Collectors.toList());
     }
 
     // DiaryRepository : 2. 사용자의 전체일기 아이디 기준 최신순 조회
     public List<DiaryResponse> getDiariesByUserIdAndDateDesc(String userId) {
         return diaryRepository.findByUserIdOrderByDiaryDateDesc(userId).stream()
-                .map(this::convertToResponse)
+                .map(diaryConverter::convertToResponse)
                 .collect(Collectors.toList());
     }
 
@@ -179,48 +179,48 @@ public class DiaryService {
     public DiaryResponse getDiaryByUserIdAndDiaryId(String userId, Long diaryId) {
         Diary diary = diaryRepository.findByIdAndUserId(diaryId, userId)
                 .orElseThrow(() -> new RuntimeException("해당 일기를 찾을 수 없습니다."));
-        return convertToResponse(diary);
+        return diaryConverter.convertToResponse(diary);
     }
 
     // DiaryRepository : 4. 사용자의 특정일기 아이디+날짜 기준 최신순 조회
     public List<DiaryResponse> getDiariesByDateDesc(String userId, LocalDate diaryDate) {
         List<Diary> diaries = diaryRepository.findByUserIdAndDiaryDateOrderByUpdatedAtDesc(userId, diaryDate);
-        return diaries.stream().map(this::convertToResponse).collect(Collectors.toList());
+        return diaries.stream().map(diaryConverter::convertToResponse).collect(Collectors.toList());
     }
 
     // DiaryRepository : 5. 들춰보기
     public DiaryResponse getAnyPublicDiary() {
         Diary diary = diaryRepository.findRandomPublicDiary()
                 .orElseThrow(() -> new NoSuchElementException("공개된 일기가 없습니다."));
-        return convertToResponse(diary);
+        return diaryConverter.convertToResponse(diary);
     }
 
-    // 일기 JSON화 메서드. 일기 반환시 사용
-    // DTO 직렬화 : Java 객체(DiaryResponse 등)를 JSON 문자열로 변환하는 과정
-    private DiaryResponse convertToResponse(Diary diary) {
-        DiaryResponse dto = new DiaryResponse();
-        dto.setId(diary.getId());
-        // dto.setUserId(diary.getUserId());
-        dto.setDiaryDate(diary.getDiaryDate().toString());
-        dto.setTitle(diary.getTitle());
-        dto.setContent(diary.getContent());
-        dto.setViewScope(diary.getViewScope());
-        dto.setCreatedAt(diary.getCreatedAt().toString());
-        dto.setUpdatedAt(diary.getUpdatedAt().toString());
-        dto.setWeatherId(diary.getWeatherId()); // 일기 id 반환
-        dto.setLatitude(diary.getLatitude()); // 위도 & 경도
-        dto.setLongitude(diary.getLongitude());
-
-        dto.setEmotionTagIds( // 감정 태그 반환
-                diary.getEmotionTags().stream()
-                        .map(EmotionTag::getId)
-                        .collect(Collectors.toList())
-        );
-        dto.setSummaryKeywords( // 요약 태그 반환
-                diary.getSummaryTags().stream()
-                        .map(SummaryTag::getContent)
-                        .collect(Collectors.toList())
-        );
-        return dto;
-    }
+//    // 일기 JSON화 메서드. 일기 반환시 사용
+//    // DTO 직렬화 : Java 객체(DiaryResponse 등)를 JSON 문자열로 변환하는 과정
+//    public DiaryResponse convertToResponse(Diary diary) {
+//        DiaryResponse dto = new DiaryResponse();
+//        dto.setId(diary.getId());
+//        // dto.setUserId(diary.getUserId());
+//        dto.setDiaryDate(diary.getDiaryDate().toString());
+//        dto.setTitle(diary.getTitle());
+//        dto.setContent(diary.getContent());
+//        dto.setViewScope(diary.getViewScope());
+//        dto.setCreatedAt(diary.getCreatedAt().toString());
+//        dto.setUpdatedAt(diary.getUpdatedAt().toString());
+//        dto.setWeatherId(diary.getWeatherId()); // 일기 id 반환
+//        dto.setLatitude(diary.getLatitude()); // 위도 & 경도
+//        dto.setLongitude(diary.getLongitude());
+//
+//        dto.setEmotionTagIds( // 감정 태그 반환
+//                diary.getEmotionTags().stream()
+//                        .map(EmotionTag::getId)
+//                        .collect(Collectors.toList())
+//        );
+//        dto.setSummaryKeywords( // 요약 태그 반환
+//                diary.getSummaryTags().stream()
+//                        .map(SummaryTag::getContent)
+//                        .collect(Collectors.toList())
+//        );
+//        return dto;
+//    }
 }

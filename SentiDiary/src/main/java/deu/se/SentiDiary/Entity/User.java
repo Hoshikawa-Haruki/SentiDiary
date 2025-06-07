@@ -24,9 +24,6 @@ public class User {
     @Column(nullable = false, length = 40)
     private String nickname;
 
-    @Column(length = 255)
-    private String profileImage;
-
     @Column
     private String role;
 
@@ -52,13 +49,5 @@ public class User {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
     }
 }
