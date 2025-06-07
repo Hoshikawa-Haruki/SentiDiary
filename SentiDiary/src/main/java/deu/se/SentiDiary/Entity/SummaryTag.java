@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  *
@@ -28,6 +30,7 @@ public class SummaryTag {
 
     @ManyToOne
     @JoinColumn(name = "diary_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Diary diary;
 
     // Getter, Setter

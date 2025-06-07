@@ -37,13 +37,8 @@ public class KakaoLoginController {
                 + "&response_type=code";
         response.sendRedirect(kakaoLoginUrl);
     }
-
-    // 2. 콜백 처리
-//    @GetMapping("/callback")
-//    public ResponseEntity<?> kakaoCallback(@RequestParam("code") String code) throws Exception {
-//        return kakaoLoginService.handleKakaoLogin(code);
-//    }
-
+    
+    // 2. 콜백 처리 (카카오측에서 호출)
     @GetMapping("/callback")
     public void kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
         KakaoLoginResponse result = kakaoLoginService.handleKakaoLogin(code); // 내부적으로 토큰 + userId + nickname 만들어짐

@@ -6,9 +6,11 @@ package deu.se.sentidiary.config;
 
 import deu.se.SentiDiary.security.JwtAuthFilter;
 import deu.se.SentiDiary.util.JwtUtil;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,11 +33,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll() // 모든 접근 허용
-//                .requestMatchers("/auth/**", "/kakao/**").permitAll() // 로그인 관련 API만 허용
-//                .requestMatchers("/admin/**").hasRole("ADMIN")
-//                .requestMatchers("/SentiDiary/api/diary/**").hasRole("USER") // 일기 CRUD 보호
+                .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll() // 403 접속 오류 방지
+                .requestMatchers("/", "/index").permitAll()
+                .requestMatchers("/kakao/**", "/kakaoLoginPage").permitAll() // 로그인/회원가입 전체 허용
+                .requestMatchers(HttpMethod.GET, "/api/diary").hasRole("ADMIN") // 전체 일기 조회 : 관리자
+                .requestMatchers("/api/diary/**").hasAnyRole("USER", "ADMIN") // 일기 CRUD : 관리자/이용자
                 .anyRequest().authenticated()
+                //.requestMatchers("/**").permitAll() // 모든 접근 허용
+                //.anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         return http.build();

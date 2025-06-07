@@ -60,8 +60,14 @@ public class Diary {
     @ManyToMany // 다대다
     @JoinTable( // 조인테이블
             name = "diary_emotion", // 중간테이블
-            joinColumns = @JoinColumn(name = "diary_id"), // 현재 엔티티(Diary)의 FK가 뭐냐를 지정
-            inverseJoinColumns = @JoinColumn(name = "emotion_id") // 상대 엔티티(EmotionTag)의 FK가 뭐냐를 지정
+            joinColumns = @JoinColumn(
+                    name = "diary_id", // 현재 엔티티(Diary)의 FK가 뭐냐를 지정
+                    foreignKey = @ForeignKey(name = "fk_diary_emotion_diary_id", foreignKeyDefinition = "FOREIGN KEY (diary_id) REFERENCES diary(id) ON DELETE CASCADE")
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "emotion_id", // 상대 엔티티(EmotionTag)의 FK가 뭐냐를 지정
+                    foreignKey = @ForeignKey(name = "fk_diary_emotion_emotion_id") // 여긴 CASCADE 없음
+            )
     )
     private Set<EmotionTag> emotionTags = new HashSet<>(); // 중복 없이 여러 개의 감정 태그를 저장
 

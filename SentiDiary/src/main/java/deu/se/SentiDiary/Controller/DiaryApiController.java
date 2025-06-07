@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 06.06
  * 일기 CRUD 요청 관리 클래스
  *
  * @author Haruki
@@ -64,8 +65,8 @@ public class DiaryApiController {
             return ResponseEntity.status(400).body("일기 수정 실패: " + e.getMessage());
         }
     }
+    
     // 3. 일기 삭제 [유저, 관리자]
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDiary(@PathVariable Long id) {
         log.info("[일기 삭제 요청] diaryId={}", id);
