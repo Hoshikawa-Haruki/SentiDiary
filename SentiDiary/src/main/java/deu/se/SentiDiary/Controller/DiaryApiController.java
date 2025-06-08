@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 06.06
- * 일기 CRUD 요청 관리 클래스
+ * 06.06 일기 CRUD 요청 관리 클래스
  *
  * @author Haruki
  */
@@ -65,7 +64,7 @@ public class DiaryApiController {
             return ResponseEntity.status(400).body("일기 수정 실패: " + e.getMessage());
         }
     }
-    
+
     // 3. 일기 삭제 [유저, 관리자]
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDiary(@PathVariable Long id) {
@@ -97,7 +96,6 @@ public class DiaryApiController {
     @GetMapping("/my/diaries/{diaryId}")
     public ResponseEntity<DiaryResponse> getMyDiaryById(@PathVariable Long diaryId) {
         String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
-        log.info("[단건 일기 조회 요청] userId={}, diaryId={}", userId, diaryId);
         return ResponseEntity.ok(diaryService.getDiaryByUserIdAndDiaryId(userId, diaryId));
     }
 
@@ -106,7 +104,6 @@ public class DiaryApiController {
     public ResponseEntity<List<DiaryResponse>> getMyDiariesByDate(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate diaryDate) {
         String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰 파싱
-        log.info("[날짜 기준 일기 조회 요청] userId={}, diaryDate={}", userId, diaryDate);
         List<DiaryResponse> diaries = diaryService.getDiariesByDateDesc(userId, diaryDate);
         return ResponseEntity.ok(diaries);
     }

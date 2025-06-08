@@ -43,11 +43,13 @@ public class SearchService {
     
     // DiaryRepository : 10. 사용자의 감정태그 기준 검색
     public List<Diary> searchByEmotionTag(String userId, String tagName) {
+        log.info("[검색] 감정태그 기준 검색 요청 - userId={}, tagName='{}'", userId, tagName);
         return diaryRepository.findByUserIdAndEmotionTagsNameContaining(userId, tagName);
     }
     
     // DiaryRepository : 11. 사용자의 요약태그 기준 검색
     public List<Diary> searchBySummaryTag(String userId, String tagName) {
-        return diaryRepository.findByUserIdAndSummaryTagsNameContaining(userId, tagName);
+        log.info("[검색] 요약태그 기준 검색 요청 - userId={}, tagName='{}'", userId, tagName);
+        return diaryRepository.findByUserIdAndSummaryTagsContentContaining(userId, tagName);
     }
 }

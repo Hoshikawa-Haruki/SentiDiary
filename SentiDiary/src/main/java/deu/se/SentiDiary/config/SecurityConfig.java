@@ -11,10 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 /**
  * Spring Security 설정 클래스
@@ -31,16 +33,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll() // 403 접속 오류 방지
-                .requestMatchers("/", "/index").permitAll()
-                .requestMatchers("/kakao/**", "/kakaoLoginPage").permitAll() // 로그인/회원가입 전체 허용
-                .requestMatchers(HttpMethod.GET, "/api/diary").hasRole("ADMIN") // 전체 일기 조회 : 관리자
-                .requestMatchers("/api/diary/**").hasAnyRole("USER", "ADMIN") // 일기 CRUD : 관리자/이용자
+                .requestMatchers("/", "/index", "/admin/login", "/kakao/**", "/kakaoLoginPage").permitAll() // 로그인 관련, 카카오 요청 허용
+                .requestMatchers("/admin_menu", "/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/diary").hasRole("ADMIN")
+                .requestMatchers("/api/diary/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
-                //.requestMatchers("/**").permitAll() // 모든 접근 허용
-                //.anyRequest().authenticated()
+                //.requestMatchers("/**").permitAll() // 모든 접근 허용     
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         return http.build();

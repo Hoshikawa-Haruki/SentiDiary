@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @Slf4j
 public class SystemController {
-
-    @GetMapping("/")
-    public String index() {
-        log.info("● index is called...");
-        return "index";
-    }
+    
+    // 더미코드. 삭제해도 됨
+//    @GetMapping("/")
+//    public String index() {
+//        log.info("● index is called...");
+//        return "index";
+//    }
 
     // 백엔드용
     @GetMapping("/createDiary")

@@ -53,6 +53,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     List<Diary> findByUserIdAndEmotionTagsNameContaining(String userId, String tagName);
     
     // 11. 사용자의 요약태그 기준 검색
-    List<Diary> findByUserIdAndSummaryTagsNameContaining(String userId, String tagName);
+    List<Diary> findByUserIdAndSummaryTagsContentContaining(String userId, String tagName);
 
 }
