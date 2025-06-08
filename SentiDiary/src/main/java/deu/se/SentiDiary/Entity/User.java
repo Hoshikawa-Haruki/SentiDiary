@@ -4,10 +4,14 @@
  */
 package deu.se.SentiDiary.Entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -27,13 +31,8 @@ public class User {
     @Column
     private String role;
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true) // 본인이 작성한 일기목록
+    private List<Diary> diaries = new ArrayList<>();
 
     public String getUserid() {
         return userid;
@@ -49,5 +48,21 @@ public class User {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public List<Diary> getDiaries() {
+        return diaries;
+    }
+
+    public void setDiaries(List<Diary> diaries) {
+        this.diaries = diaries;
     }
 }

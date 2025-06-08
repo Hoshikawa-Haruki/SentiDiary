@@ -26,30 +26,30 @@ public class SearchService {
     // DiaryRepository : 6. 사용자의 제목 기준 검색
     public List<Diary> searchByTitle(String userId, String keyword) {
         log.info("[검색] 제목 기준 검색 요청 - userId={}, keyword='{}'", userId, keyword);
-        return diaryRepository.findByUserIdAndTitleContaining(userId, keyword);
+        return diaryRepository.findByUserUseridAndTitleContaining(userId, keyword);
     }
 
     // DiaryRepository : 7. 사용자의 내용 기준 검색
     public List<Diary> searchByContent(String userId, String keyword) {
         log.info("[검색] 내용 기준 검색 요청 - userId={}, keyword='{}'", userId, keyword);
-        return diaryRepository.findByUserIdAndContentContaining(userId, keyword);
+        return diaryRepository.findByUserUseridAndContentContaining(userId, keyword);
     }
 
     // DiaryRepository : 8. 사용자의 제목+내용 기준 검색
     public List<Diary> searchByTitleOrContent(String userId, String keyword) {
         log.info("[검색] 제목+내용 기준 검색 요청 - userId={}, keyword='{}'", userId, keyword);
-        return diaryRepository.findByUserIdAndTitleContainingOrContentContaining(userId, keyword, keyword);
+        return diaryRepository.findByUserUseridAndTitleContainingOrContentContaining(userId, keyword, keyword);
     }
     
     // DiaryRepository : 10. 사용자의 감정태그 기준 검색
     public List<Diary> searchByEmotionTag(String userId, String tagName) {
         log.info("[검색] 감정태그 기준 검색 요청 - userId={}, tagName='{}'", userId, tagName);
-        return diaryRepository.findByUserIdAndEmotionTagsNameContaining(userId, tagName);
+        return diaryRepository.findByUserUseridAndEmotionTagsNameContaining(userId, tagName);
     }
     
     // DiaryRepository : 11. 사용자의 요약태그 기준 검색
     public List<Diary> searchBySummaryTag(String userId, String tagName) {
         log.info("[검색] 요약태그 기준 검색 요청 - userId={}, tagName='{}'", userId, tagName);
-        return diaryRepository.findByUserIdAndSummaryTagsContentContaining(userId, tagName);
+        return diaryRepository.findByUserUseridAndSummaryTagsContentContaining(userId, tagName);
     }
 }

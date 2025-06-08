@@ -4,10 +4,12 @@
  */
 package deu.se.SentiDiary.Controller;
 
+import deu.se.SentiDiary.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,10 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class UserApiController {
 
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        // 인증된 사용자 ID 가져오기 (JwtAuthFilter에서 set한 userId)
-        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok("✅ JWT 인증 성공! userId: " + userId);
+    @Autowired
+    private UserService userService;
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteUser() {
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰에서 userId 파싱
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
     }
 }

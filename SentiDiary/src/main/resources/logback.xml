@@ -1,4 +1,3 @@
-
 <configuration>
     <!-- 콘솔 로그 : INFO 이상만 출력-->
     <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
@@ -23,11 +22,7 @@
             <level>INFO</level>
         </filter>
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="ch.qos.logback.classic.html.HTMLLayout" />
-            <!-- html로 저장 -->
-            
-            <!--HTML 로그에서 시간 형식을 국제 표준으로 맞추고, 시간대를 UTC로 고정-->
-            <!--htmllayout datePattern = "iso8601" timezone = "gmt+0"-->
+            <layout class="deu.se.SentiDiary.logs.Utf8HtmlLayout" />
         </encoder>
     </appender>
     <!--

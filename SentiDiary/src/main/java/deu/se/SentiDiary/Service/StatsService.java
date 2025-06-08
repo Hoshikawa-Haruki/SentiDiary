@@ -38,7 +38,7 @@ public class StatsService {
     // 사용자의 전체 감정 통계 (한글 + 0 포함)
     public Map<String, Long> getEmotionStatsByUser(String userId) {
         log.info("[감정 통계 요청] userId={}", userId);
-        List<Diary> diaries = diaryRepository.findByUserId(userId);
+        List<Diary> diaries = diaryRepository.findByUserUserid(userId);
 
         // 0으로 초기화
         Map<String, Long> stats = EMOTION_KR_LIST.stream()
@@ -64,7 +64,7 @@ public class StatsService {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        List<Diary> diaries = diaryRepository.findByUserIdAndDiaryDateBetween(userId, start, end);
+        List<Diary> diaries = diaryRepository.findByUserUseridAndDiaryDateBetween(userId, start, end);
         log.info("[{}년 {}월 감정 통계 요청] 일기 수: {}", year, month, diaries.size());
 
         Map<String, Long> stats = EMOTION_KR_LIST.stream()
@@ -88,7 +88,7 @@ public class StatsService {
     // 사용자의 전체 요약 통계
     public Map<String, Integer> getUserTagStats(String userId) {
         log.info("[요약 태그 통계 요청] userId={}", userId);
-        List<Diary> diaries = diaryRepository.findByUserId(userId);
+        List<Diary> diaries = diaryRepository.findByUserUserid(userId);
         Map<String, Integer> tagCounts = new HashMap<>();
 
         for (Diary diary : diaries) {
@@ -112,7 +112,7 @@ public class StatsService {
         // 해당 연/월의 마지막일 (예: 2025-06-30, 윤년이면 2월 29일 등도 자동 처리됨)
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        List<Diary> diaries = diaryRepository.findByUserIdAndDiaryDateBetween(userId, start, end);
+        List<Diary> diaries = diaryRepository.findByUserUseridAndDiaryDateBetween(userId, start, end);
         log.info("[{}년 {}월 태그 통계 요청] 일기 수: {}", year, month, diaries.size());
 
         // 태그별 출현 횟수를 저장할 맵 (태그명 -> 빈도수)

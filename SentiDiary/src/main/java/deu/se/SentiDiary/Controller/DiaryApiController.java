@@ -111,7 +111,6 @@ public class DiaryApiController {
     // DiaryRepository : 5. 들춰보기 단건일기 조회
     @GetMapping("/random")
     public ResponseEntity<DiaryResponse> getRandomPublicDiary() {
-        log.info("[들춰보기 요청]");
         DiaryResponse diary = diaryService.getAnyPublicDiary();
         return ResponseEntity.ok(diary);
     }

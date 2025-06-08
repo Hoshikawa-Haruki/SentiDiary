@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import deu.se.SentiDiary.DTO.KakaoLoginResponse;
 import deu.se.SentiDiary.Entity.User;
 import deu.se.SentiDiary.Repository.UserRepository;
-import deu.se.SentiDiary.util.JwtUtil;
+import deu.se.SentiDiary.jwt.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
