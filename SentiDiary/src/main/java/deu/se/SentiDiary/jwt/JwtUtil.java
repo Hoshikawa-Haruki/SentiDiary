@@ -26,8 +26,8 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
 
-    // JWT 유효 시간 (1시간)
-    private final long expirationMs = 1000 * 60 * 60;
+    // JWT 유효 시간 (24시간)
+    private final long expirationMs = 1000 * 60 * 60 * 24;
 
     /**
      * 06.06 JWT 토큰 생성
