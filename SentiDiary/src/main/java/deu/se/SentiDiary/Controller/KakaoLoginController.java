@@ -19,7 +19,7 @@ import org.springframework.stereotype.Controller;
  */
 @Slf4j
 @Controller
-@RequestMapping("/kakao")
+@RequestMapping("/api/kakao")
 public class KakaoLoginController {
 
     @Value("${kakao.client-id}")

@@ -37,7 +37,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll() // 403 접속 오류 방지
-                .requestMatchers("/", "/index", "/admin/login", "/kakao/**", "/kakaoLoginPage").permitAll()
+                .requestMatchers("/", "/index", "/admin/login", "/api/kakao/**").permitAll()
                 .requestMatchers("/admin_style.css").permitAll()
                 // ✅ 관리자 영역 - 세션 기반 ROLE_ADMIN
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
