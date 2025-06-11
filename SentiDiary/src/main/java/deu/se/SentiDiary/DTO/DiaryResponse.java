@@ -14,7 +14,8 @@ import java.util.List;
 public class DiaryResponse {
 
     private Long id;
-    private String userId;
+    // 06.07 lsh 토큰 사용으로, 반환 일기의 userId 제거
+    // private String userId;
     private String diaryDate;
     private String title;
     private String content;
@@ -36,13 +37,13 @@ public class DiaryResponse {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+//    public String getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(String userId) {
+//        this.userId = userId;
+//    }
 
     public String getDiaryDate() {
         return diaryDate;

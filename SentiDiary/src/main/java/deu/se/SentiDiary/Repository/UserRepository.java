@@ -13,6 +13,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, String> {
-
+    // 아이디로 유저 조회
     Optional<User> findByUserid(String userid);
 }

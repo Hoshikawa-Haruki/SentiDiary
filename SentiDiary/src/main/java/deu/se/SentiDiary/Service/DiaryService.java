@@ -8,36 +8,48 @@ package deu.se.SentiDiary.Service;
  *
  * @author Haruki
  */
+import deu.se.SentiDiary.Converter.DiaryConverter;
 import deu.se.SentiDiary.DTO.DiaryRequest;
 import deu.se.SentiDiary.DTO.DiaryResponse;
 import deu.se.SentiDiary.Entity.Diary;
 import deu.se.SentiDiary.Entity.EmotionTag;
 import deu.se.SentiDiary.Entity.SummaryTag;
+import deu.se.SentiDiary.Entity.User;
 import deu.se.SentiDiary.Repository.DiaryRepository;
 import deu.se.SentiDiary.Repository.EmotionTagRepository;
-import deu.se.SentiDiary.Repository.SummaryTagRepository;
+import deu.se.SentiDiary.Repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 @Service
 public class DiaryService {
 
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     DiaryRepository diaryRepository;
     @Autowired
     EmotionTagRepository emotionTagRepository;
     @Autowired
-    SummaryTagRepository summaryTagRepository;
+    private DiaryConverter diaryConverter;
 
     //Optional : 일기가 없을수도 있을 경우
     public Optional<Diary> getDiaryById(Long id) {
@@ -47,18 +59,24 @@ public class DiaryService {
     // 1. 일기 작성
     @Transactional
     public void createDiary(DiaryRequest dto) {
+        log.info("[일기 작성 요청] : {}", dto.getUserId());
+        User user = userRepository.findByUserid(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("해당 사용자가 존재하지 않습니다: " + dto.getUserId()));
+
         Diary diary = new Diary();
-        diary.setUserId(dto.getUserId());
+//      diary.setUserId(dto.getUserId());
+        diary.setUser(user);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         diary.setDiaryDate(LocalDate.parse(dto.getDiaryDate(), formatter));
         diary.setTitle(dto.getTitle());
         diary.setContent(dto.getContent());
         diary.setViewScope(dto.getViewScope());
-        diary.setWeatherId(dto.getWeatherId()); // int형 weather
+        diary.setWeatherId(dto.getWeatherId());
         diary.setLatitude(dto.getLatitude());
         diary.setLongitude(dto.getLongitude());
-        diary.setCreatedAt(LocalDateTime.now());
-        diary.setUpdatedAt(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now(); // 작성 시간
+        diary.setCreatedAt(now);
+        diary.setUpdatedAt(now);
 
         // 감정 태그 처리
         if (dto.getEmotionTagIds() != null) {
@@ -94,12 +112,17 @@ public class DiaryService {
     // 2. 일기 수정
     @Transactional
     public void updateDiary(Long id, DiaryRequest dto) {
+        log.info("[일기 수정 요청] 일기 번호={}, userId={}", id, dto.getUserId());
+
         // 1) 기존 일기 조회
         Diary diary = diaryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 일기를 찾을 수 없습니다."));
 
         // 2) 기본 필드 수정
-        diary.setUserId(dto.getUserId());
+        User user = userRepository.findByUserid(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("해당 사용자가 존재하지 않습니다: " + dto.getUserId()));
+//        diary.setUserId(dto.getUserId());
+        diary.setUser(user);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         diary.setDiaryDate(LocalDate.parse(dto.getDiaryDate(), formatter));
         diary.setTitle(dto.getTitle());
@@ -139,59 +162,145 @@ public class DiaryService {
         diaryRepository.save(diary);
     }
 
-    // 3. 전체 일기 조회 (관리자)
-    public List<DiaryResponse> getAllDiaries() {
-        return diaryRepository.findAll().stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
-    }
-
-    // 4. 전체 일기 조회 (사용자 ID 기준)
-    public List<DiaryResponse> getDiariesByUserId(String userId) {
-        return diaryRepository.findByUserId(userId).stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
-    }
-
-    // 5. 전체 일기 날짜순 desc 조회 (사용자 ID 기준)
-    public List<DiaryResponse> getDiariesByUserIdAndDateDesc(String userId) {
-        return diaryRepository.findByUserIdOrderByDiaryDateDesc(userId).stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
-    }
-
-    // 6. 일기 삭제 (사용자 ID기준)
+    // 3. 일기 삭제 (사용자 ID기준)
     @Transactional
     public void deleteDiary(Long id) {
         diaryRepository.deleteById(id);
     }
 
-    // 일기 JSON화 메서드. 일기 반환시 사용
-    // DTO 직렬화 : Java 객체(DiaryResponse 등)를 JSON 문자열로 변환하는 과정
-    private DiaryResponse convertToResponse(Diary diary) {
-        DiaryResponse dto = new DiaryResponse();
-        dto.setId(diary.getId());
-        dto.setUserId(diary.getUserId());
-        dto.setDiaryDate(diary.getDiaryDate().toString());
-        dto.setTitle(diary.getTitle());
-        dto.setContent(diary.getContent());
-        dto.setViewScope(diary.getViewScope());
-        dto.setCreatedAt(diary.getCreatedAt().toString());
-        dto.setUpdatedAt(diary.getUpdatedAt().toString());
-        dto.setWeatherId(diary.getWeatherId()); // 일기 id 반환
-        dto.setLatitude(diary.getLatitude()); // 위도 & 경도
-        dto.setLongitude(diary.getLongitude());
+    // 전체 일기 조회 (관리자)
+    public List<DiaryResponse> getAllDiaries() {
+        return diaryRepository.findAll().stream()
+                .map(diaryConverter::convertToResponse)
+                .collect(Collectors.toList());
+    }
 
-        dto.setEmotionTagIds( // 감정 태그 반환
-                diary.getEmotionTags().stream()
-                        .map(EmotionTag::getId)
-                        .collect(Collectors.toList())
-        );
-        dto.setSummaryKeywords( // 요약 태그 반환
-                diary.getSummaryTags().stream()
-                        .map(SummaryTag::getContent)
-                        .collect(Collectors.toList())
-        );
-        return dto;
+    // DiaryRepository : 1. 사용자의 전체일기 아이디 기준 조회
+    // (06.07 기준 사용 X)
+    public List<DiaryResponse> getDiariesByUserId(String userId) {
+        return diaryRepository.findByUserUserid(userId).stream()
+                .map(diaryConverter::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    // DiaryRepository : 2. 사용자의 전체일기 아이디 기준 최신순 조회
+    public List<DiaryResponse> getDiariesByUserIdAndDateDesc(String userId) {
+        log.info("[전체 일기 조회 요청] userId={}", userId);
+        return diaryRepository.findByUserUseridOrderByDiaryDateDesc(userId).stream()
+                .map(diaryConverter::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    // DiaryRepository : 3. 사용자 단건일기 아이디 기준 조회
+    public DiaryResponse getDiaryByUserIdAndDiaryId(String userId, Long diaryId) {
+        log.info("[단건 일기 조회 요청] userId={}, diaryId={}", userId, diaryId);
+        Diary diary = diaryRepository.findByIdAndUserUserid(diaryId, userId)
+                .orElseThrow(() -> new RuntimeException("해당 일기를 찾을 수 없습니다."));
+        return diaryConverter.convertToResponse(diary);
+    }
+
+    // DiaryRepository : 4. 사용자의 특정일기 아이디+날짜 기준 최신순 조회
+    public List<DiaryResponse> getDiariesByDateDesc(String userId, LocalDate diaryDate) {
+        log.info("[날짜 기준 일기 조회 요청] userId={}, diaryDate={}", userId, diaryDate);
+        List<Diary> diaries = diaryRepository.findByUserUseridAndDiaryDateOrderByUpdatedAtDesc(userId, diaryDate);
+        return diaries.stream().map(diaryConverter::convertToResponse).collect(Collectors.toList());
+    }
+
+    // DiaryRepository : 5. 들춰보기
+    public DiaryResponse getAnyPublicDiary() {
+        log.info("[들춰보기 요청]");
+        Diary diary = diaryRepository.findRandomPublicDiary()
+                .orElseThrow(() -> new NoSuchElementException("공개된 일기가 없습니다."));
+        return diaryConverter.convertToResponse(diary);
+    }
+
+    // DiaryRepository : 12. 사용자의 일기 갯수 조회
+    public Map<String, Long> getDiaryCountPerUser(List<User> users) {
+        log.info("[사용자별 일기 총 갯수 조회]");
+        Map<String, Long> diaryCountMap = new HashMap<>();
+        for (User user : users) {
+            Long count = diaryRepository.countByUserUserid(user.getUserid());
+            diaryCountMap.put(user.getUserid(), count);
+        }
+        return diaryCountMap;
+    }
+
+    // DiaryRepository : 13. 7일간 일기 조회
+    public Map<LocalDate, Long> getDiaryCountsLast7Days() {
+        LocalDate startDate = LocalDate.now().minusDays(6); // 오늘 포함 7일
+        List<Object[]> results = diaryRepository.countDailyDiariesSince(startDate);
+
+        Map<LocalDate, Long> diaryCountMap = new LinkedHashMap<>();
+        for (Object[] row : results) {
+            LocalDate date = (LocalDate) row[0];
+            Long count = (Long) row[1];
+            diaryCountMap.put(date, count);
+        }
+
+        // 누락된 날짜 0으로 채우기
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startDate.plusDays(i);
+            diaryCountMap.putIfAbsent(date, 0L);
+        }
+
+        return diaryCountMap;
+    }
+
+    // DiaryRepository : 14. 주간 일기 통계
+    public Map<String, Long> getDiaryCountsByWeek() {
+        LocalDate today = LocalDate.now();
+        LocalDate start = today.minusWeeks(5); // 최근 6주 포함
+
+        Map<String, Long> weeklyStats = new LinkedHashMap<>();
+
+        // 6주치 주간 시작일 생성
+        for (int i = 0; i < 6; i++) {
+            LocalDate monday = start.plusWeeks(i).with(DayOfWeek.MONDAY);
+            LocalDate sunday = monday.plusDays(6);
+            String label = monday.format(DateTimeFormatter.ofPattern("MM/dd"))
+                    + "~"
+                    + sunday.format(DateTimeFormatter.ofPattern("MM/dd"));
+            weeklyStats.put(label, 0L); // 기본값 0
+        }
+
+        // DB에서 해당 구간 일기 수 집계 (주차별)
+        List<Object[]> results = diaryRepository.countByWeek(); // weekKey: "2025W23" 등
+
+        for (Object[] row : results) {
+            String rawWeek = String.valueOf(row[0]);  // 예: 202524
+            Long count = (Long) row[1];
+
+            if (rawWeek.length() == 6 && rawWeek.matches("\\d{6}")) {
+                int year = Integer.parseInt(rawWeek.substring(0, 4));
+                int week = Integer.parseInt(rawWeek.substring(4));
+
+                // 주차를 날짜로 변환
+                LocalDate monday = LocalDate.ofYearDay(year, 1)
+                        .with(WeekFields.ISO.weekOfYear(), week)
+                        .with(WeekFields.ISO.dayOfWeek(), 1); // 월요일
+
+                LocalDate sunday = monday.plusDays(6);
+
+                String label = monday.format(DateTimeFormatter.ofPattern("MM/dd"))
+                        + "~"
+                        + sunday.format(DateTimeFormatter.ofPattern("MM/dd"));
+
+                if (weeklyStats.containsKey(label)) {
+                    weeklyStats.put(label, count);
+                }
+            }
+        }
+
+        return weeklyStats;
+    }
+
+    // DiaryRepository : 15. 월간 일기 통계
+    public Map<String, Long> getDiaryCountsByMonth() {
+        List<Object[]> result = diaryRepository.countByMonth(); // 쿼리 결과
+        Map<String, Long> monthlyStats = new LinkedHashMap<>();
+        for (Object[] row : result) {
+            monthlyStats.put((String) row[0], (Long) row[1]); // row[0] = "2025-06", row[1] = count
+        }
+        return monthlyStats;
     }
 }

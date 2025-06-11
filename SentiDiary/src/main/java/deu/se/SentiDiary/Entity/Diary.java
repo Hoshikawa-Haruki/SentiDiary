@@ -27,8 +27,19 @@ public class Diary {
     @Column(name = "id")
     private Long id; // 일기 id
 
-    @Column(nullable = false) // DB 컬럼으로 매핑, NOT NULL
-    private String userId; // 작성자 id
+//    @Column(nullable = false) // DB 컬럼으로 매핑, NOT NULL
+//    private String userId; // 작성자 id
+    // 06.08 User과 연관 관계 추가. FK
+    @ManyToOne
+    @JoinColumn(
+            name = "user_id", // diary 테이블에 들어갈 FK 컬럼명
+            referencedColumnName = "userid", // user 테이블의 PK
+            foreignKey = @ForeignKey(
+                    name = "fk_diary_user",
+                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES user(userid) ON DELETE CASCADE"
+            )
+    )
+    private User user;
 
     @Column(nullable = false, name = "diary_date")
     private LocalDate diaryDate;  // 사용자가 입력한 날짜
@@ -60,8 +71,14 @@ public class Diary {
     @ManyToMany // 다대다
     @JoinTable( // 조인테이블
             name = "diary_emotion", // 중간테이블
-            joinColumns = @JoinColumn(name = "diary_id"), // 현재 엔티티(Diary)의 FK가 뭐냐를 지정
-            inverseJoinColumns = @JoinColumn(name = "emotion_id") // 상대 엔티티(EmotionTag)의 FK가 뭐냐를 지정
+            joinColumns = @JoinColumn(
+                    name = "diary_id", // 현재 엔티티(Diary)의 FK가 뭐냐를 지정
+                    foreignKey = @ForeignKey(name = "fk_diary_emotion_diary_id", foreignKeyDefinition = "FOREIGN KEY (diary_id) REFERENCES diary(id) ON DELETE CASCADE")
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "emotion_id", // 상대 엔티티(EmotionTag)의 FK가 뭐냐를 지정
+                    foreignKey = @ForeignKey(name = "fk_diary_emotion_emotion_id") // 여긴 CASCADE 없음. 감정 테이블 10개는 유지되야 하니깐
+            )
     )
     private Set<EmotionTag> emotionTags = new HashSet<>(); // 중복 없이 여러 개의 감정 태그를 저장
 
@@ -81,12 +98,12 @@ public class Diary {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDate getDiaryDate() {

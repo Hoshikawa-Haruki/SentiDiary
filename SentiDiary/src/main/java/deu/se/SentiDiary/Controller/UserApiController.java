@@ -5,27 +5,30 @@
 package deu.se.SentiDiary.Controller;
 
 import deu.se.SentiDiary.Service.UserService;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author Haruki
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/api/user")
 public class UserApiController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register_confirm")
-    public String registerConfirm(HttpSession session) {
-        return userService.registerUser(session);
+    @DeleteMapping
+    public ResponseEntity<String> deleteUser() {
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 토큰에서 userId 파싱
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
     }
 }
