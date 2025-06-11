@@ -185,6 +185,7 @@ public class DiaryService {
 
     // DiaryRepository : 2. 사용자의 전체일기 아이디 기준 최신순 조회
     public List<DiaryResponse> getDiariesByUserIdAndDateDesc(String userId) {
+        log.info("[전체 일기 조회 요청] userId={}", userId);
         return diaryRepository.findByUserUseridOrderByDiaryDateDesc(userId).stream()
                 .map(diaryConverter::convertToResponse)
                 .collect(Collectors.toList());

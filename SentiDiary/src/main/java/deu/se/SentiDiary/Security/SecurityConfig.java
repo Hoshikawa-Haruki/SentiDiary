@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package deu.se.SentiDiary.Security;
+package deu.se.SentiDiary.security;
 
 import deu.se.SentiDiary.jwt.JwtAuthFilter;
 import deu.se.SentiDiary.jwt.JwtUtil;
@@ -38,6 +38,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll() // 403 접속 오류 방지
                 .requestMatchers("/", "/index", "/admin/login", "/kakao/**", "/kakaoLoginPage").permitAll()
+                .requestMatchers("/admin_style.css").permitAll()
                 // ✅ 관리자 영역 - 세션 기반 ROLE_ADMIN
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 // ✅ 사용자 API - JWT 기반
@@ -63,7 +64,8 @@ public class SecurityConfig {
                     response.sendRedirect(request.getContextPath() + "/api/admin/admin_main");
                 })
                 .failureHandler((request, response, exception) -> {
-                    response.sendRedirect(request.getContextPath() + "/login_fail");
+                    request.getSession().setAttribute("loginFailed", true);
+                    response.sendRedirect(request.getContextPath() + "/");
                 })
         );
 

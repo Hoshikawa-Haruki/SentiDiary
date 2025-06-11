@@ -55,7 +55,7 @@ public class AdminController {
     // 사용자 리스트 조회
     @GetMapping("/users")
     public String userList(@RequestParam(defaultValue = "0") int page, Model model) {
-        Page<User> userPage = userRepository.findAll(PageRequest.of(page, 1));
+        Page<User> userPage = userRepository.findAll(PageRequest.of(page, 5));
         List<User> userList = userPage.getContent();
         // 사용자별 일기 수 계산
         Map<String, Long> diaryCountMap = diaryService.getDiaryCountPerUser(userList);

@@ -1,15 +1,23 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
         <title>주간 일기 통계</title>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/admin_style.css">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
         <h2 style="text-align:center;">📊 주간 일기 통계</h2>
 
-        <div style="width: 1280px; height: 720px; margin: auto;">
+        <div style="width: 720px; height: 480px; margin: auto;">
             <canvas id="diaryChart"></canvas>
+        </div>
+
+        <div style="text-align:center; margin-top: 20px;">
+            <a href="${pageContext.request.contextPath}/api/admin/admin_main">
+                <button>🏠 메인 화면으로</button>
+            </a>
         </div>
 
         <script>
@@ -46,7 +54,6 @@
                 });
             }
 
-            // 통계 데이터 로딩
             window.onload = function () {
                 fetch(`${pageContext.request.contextPath}/api/admin/weekly-stats`)
                         .then(res => res.json())

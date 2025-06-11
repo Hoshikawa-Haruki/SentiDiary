@@ -1,0 +1,114 @@
+/* admin.css */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 40px auto;
+    padding: 20px;
+    max-width: 800px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+h2 {
+    color: #444;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 8px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin: 8px 0;
+}
+
+a {
+    color: #2196F3;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #f1f1f1;
+}
+
+button, input[type="submit"] {
+    padding: 6px 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover, input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+input[type="text"], input[type="password"] {
+    padding: 8px;
+    width: 60%;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+p.error {
+    color: red;
+    font-weight: bold;
+}
+
+/* ====== 기존 스타일 아래에 추가 ====== */
+
+/* 📊 차트 영역 중앙 정렬 및 크기 조정 */
+.chart-container {
+    width: 80%;
+    max-width: 900px;
+    margin: 30px auto 10px auto;
+    text-align: center;
+}
+
+/* 📉 차트(canvas)가 부모 영역을 따르도록 */
+.chart-container canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+/* 🔙 메인화면 버튼을 차트 아래 바로 붙게, 위로 당기기 */
+.back-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+/* 버튼 좀 더 크게 & 돋보이게 */
+.back-button button {
+    padding: 10px 22px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+

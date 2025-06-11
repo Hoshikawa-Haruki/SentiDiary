@@ -15,6 +15,7 @@
 <html>
     <head>
         <title>사용자 목록</title>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/admin_style.css">
         <script>
             function deleteUser(userid) {
                 if (confirm(userid + " 사용자를 삭제하시겠습니까?")) {
