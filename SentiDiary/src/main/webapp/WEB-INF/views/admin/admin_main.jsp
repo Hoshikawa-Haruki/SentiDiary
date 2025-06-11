@@ -19,7 +19,6 @@
 
         <ul>
             <li><a href="<%= request.getContextPath()%>/api/admin/users">사용자 목록</a></li>
-            <!--<li><a href="<%= request.getContextPath()%>/api/admin/stats_combined"> 통계 보기</a></li>-->
             <li><a href="<%= request.getContextPath()%>/api/admin/stats_daily"> 일간 통계</a></li>
             <li><a href="<%= request.getContextPath()%>/api/admin/stats_weekly"> 주간 통계</a></li>
             <li><a href="<%= request.getContextPath()%>/api/admin/logs" target="_blank">서버 로그 보기</a></li>

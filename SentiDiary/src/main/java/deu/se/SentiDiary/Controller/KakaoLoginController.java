@@ -32,7 +32,7 @@ public class KakaoLoginController {
     private KakaoLoginService kakaoLoginService;
 
     // 1. 카카오 로그인 페이지로 리다이렉트
-    //  사용자를 카카오 로그인 페이지(https://kauth.kakao.com/oauth/authorize)로 보냄.
+    // 사용자를 카카오 로그인 페이지(https://kauth.kakao.com/oauth/authorize)로 보냄.
     // 카카오에 로그인 후, **인가 코드 (authorization code)**를 발급받기 위함.
     // 리다이렉트 URI를 통해 카카오는 로그인 후 본 서버의 /callback으로 자동 리디렉션
     @GetMapping("/login")
